@@ -17,19 +17,26 @@ error_t read_matrix(FILE *fp, matrix_t *m)
   if (fp==NULL){  // si no es de texto, me fijo si es binario
     fp = fopen ("M2.bin", "rb"); //abro el binario
     if (fp==NULL)
-  	  return -E_FILE_ERROR; //retorna error si no abre ni el archivo binario ni texto
+  	  return -E_FORMAT_ERROR; //retorna error si no abre ni el archivo binario ni texto
     //procesando archivo binario
   }
   //procesando archivo de texto
-  char temp = 50; 
+  char temp = 50;
+  char c;
   while(!feof(fp)){ //mientras no termine el archivo
   	if (strcmp(fgets(temp,50,fp), "M1") == 0) { //leo la primera linea, y me fijo si dice M1
       m=(m*)malloc(sizeof(matrix_t)); //reservo memoria para el puntero al struct matrix
-      if(m->fmt==NULL)
+      if(m==NULL)
         return -E_SIZE_ERROR;
       *m->fmt = M1; // coloco el valor M1 , al formato de matriz
-      while ((strcmp(fgetc(fp), "#") == 0)); // si el caracter es "#", descarto la linea completa
+      while ((strcmp(c = fgetc(fp), "#") == 0)); // si el caracter es "#", descarto la linea completa
         fgets(temp,50,fp)
+      *m->rows=c; //------------------
+       c = fgetc(fp);c = fgetc(fp); //TENGO QUE VER COMO CASTEAR EL CHAR A INT PARA ALMACENARLO EN ROWS Y COLS
+      *m->cols=c;//------------------- CHUSMEAR FUNCION "STRTOL"
+      
+
+
       
        
         
