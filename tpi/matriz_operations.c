@@ -13,21 +13,25 @@ error_t get_ffmt_matrix(matrix_t *m, matrix_fmt_t  *fmt)
 
 error_t read_matrix(FILE *fp, matrix_t *m)
 {
-  fp = fopen ("M1.txt", "r");
-  if (fp==NULL){
-    fp = fopen ("M2.bin", "rb");
+  fp = fopen ("M1.txt", "r"); //abro el archivo de texto
+  if (fp==NULL){  // si no es de texto, me fijo si es binario
+    fp = fopen ("M2.bin", "rb"); //abro el binario
     if (fp==NULL)
-  	  return -E_FILE_ERROR;
-
+  	  return -E_FILE_ERROR; //retorna error si no abre ni el archivo binario ni texto
+    //procesando archivo binario
   }
-  char temp = 50;
-  while(!feof(fp)){
-  	if (strcmp(fgets(temp,50,fp), "M1") == 0) {
-      m=(m*)malloc(sizeof(matrix_t));
+  //procesando archivo de texto
+  char temp = 50; 
+  while(!feof(fp)){ //mientras no termine el archivo
+  	if (strcmp(fgets(temp,50,fp), "M1") == 0) { //leo la primera linea, y me fijo si dice M1
+      m=(m*)malloc(sizeof(matrix_t)); //reservo memoria para el puntero al struct matrix
       if(m->fmt==NULL)
         return -E_SIZE_ERROR;
-      *m->fmt = M1;
-      while (strcmp(fgetc(fp), "#") == 0);
+      *m->fmt = M1; // coloco el valor M1 , al formato de matriz
+      while ((strcmp(fgetc(fp), "#") == 0)); // si el caracter es "#", descarto la linea completa
+        fgets(temp,50,fp)
+      
+       
         
       
 
