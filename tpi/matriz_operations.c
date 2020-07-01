@@ -14,14 +14,24 @@ error_t get_ffmt_matrix(matrix_t *m, matrix_fmt_t  *fmt)
 error_t read_matrix(FILE *fp, matrix_t *m)
 {
   fp = fopen ("M1.txt", "r");
-  if (fp==NULL)
-  	return -E_FILE_ERROR;
+  if (fp==NULL){
+    fp = fopen ("M2.bin", "rb");
+    if (fp==NULL)
+  	  return -E_FILE_ERROR;
 
-  int cont = 0;
+  }
   char temp = 50;
+  while(!feof(fp)){
+  	if (strcmp(fgets(temp,50,fp), "M1") == 0) {
+      m=(m*)malloc(sizeof(matrix_t));
+      if(m->fmt==NULL)
+        return -E_SIZE_ERROR;
+      *m->fmt = M1;
+      while (strcmp(fgetc(fp), "#") == 0);
+        
+      
 
-  while(! feof(fp)){
-  	if (strcmp(fgets(temp,50,fp), "M1") == 0) 
+    }
 
   }
   return -E_NOTIMPL_ERROR;      

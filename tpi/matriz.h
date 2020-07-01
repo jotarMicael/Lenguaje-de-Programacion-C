@@ -16,11 +16,12 @@
 #define V_ONE          1.0
 #define V_DELTA_PRECS  0.00001
 
-typedef enum matrix_fmt {M1 , M2 , INVALID} matrix_fmt_t;
+typedef enum matrix_fmt {M1 = 1 , M2 , INVALID} matrix_fmt_t;
 
 typedef struct matrix {
             matrix_fmt_t    fmt;
             unsigned int    rows,cols;
+            double matriz[rows][cols];
             // Please: Complete me
          }  matrix_t;
 /***
