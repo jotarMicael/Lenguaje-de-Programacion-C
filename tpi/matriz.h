@@ -19,8 +19,8 @@
 typedef enum matrix_fmt {M1 = 1 , M2 , INVALID} matrix_fmt_t;
 
 typedef struct matrix {
-            matrix_fmt_t    fmt;
-            unsigned int    rows,cols;
+            matrix_fmt_t  fmt;
+            int    rows,cols;
             
             // Please: Complete me
          }  matrix_t;

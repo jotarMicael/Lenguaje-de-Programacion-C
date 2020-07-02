@@ -4,7 +4,7 @@ int output_error(FILE *fp, error_t e)
 {
   switch (e)
     {
-  case E_OK:
+  case -E_OK:
     return fprintf(fp, "NO hay error (OK)");
   case -E_READ_ERROR:
     return fprintf(fp, "Error de lectura (READ)");
