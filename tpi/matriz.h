@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <list.h>
-#include "error_mat.h" 
+#include "error_mat.h"
 
 #define N_BUF_LENGTH   2048
 #define C_COMMENT       '#' 
@@ -21,7 +21,7 @@ typedef enum matrix_fmt {M1 = 1 , M2 , INVALID} matrix_fmt_t;
 typedef struct matrix {
             matrix_fmt_t    fmt;
             unsigned int    rows,cols;
-            double matriz[rows][cols];
+            
             // Please: Complete me
          }  matrix_t;
 /***
