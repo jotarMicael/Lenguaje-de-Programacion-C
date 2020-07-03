@@ -11,8 +11,14 @@ error_t get_ffmt_matrix(matrix_t *m, matrix_fmt_t  *fmt)
   return -E_NOTIMPL_ERROR;      
 }
 
-error_t read_matrix(FILE *fp, matrix_t *m)
-{
+error_t read_matrix(FILE *fp, matrix_t *m){
+  char temp = 50; //para leer de a lineas
+  char c; //para leer de a caracteres
+  char *p; //puntero para utilizar en la funcion strtol
+  int num; //entero para almacenar el entero devuelto por strtool
+  double num2; 
+
+  m=(m*)malloc(sizeof(matrix_t)); //asigno memoria al puntero que contiene el registro.
   fp = fopen ("M1.txt", "r"); //abro el archivo de texto
   if (fp==NULL){  // si no es de texto, me fijo si es binario
     fp = fopen ("M2.bin", "rb"); //abro el binario
@@ -21,31 +27,44 @@ error_t read_matrix(FILE *fp, matrix_t *m)
     //procesando archivo binario
   }
   //procesando archivo de texto
-  char temp = 50;
-  char c;
+
   while(!feof(fp)){ //mientras no termine el archivo
   	if (strcmp(fgets(temp,50,fp), "M1") == 0) { //leo la primera linea, y me fijo si dice M1
       m=(m*)malloc(sizeof(matrix_t)); //reservo memoria para el puntero al struct matrix
       if(m==NULL)
         return -E_SIZE_ERROR;
       *m->fmt = M1; // coloco el valor M1 , al formato de matriz
-      while ((strcmp(c = fgetc(fp), "#") == 0)); // si el caracter es "#", descarto la linea completa
+      while ((strcmp(c = fgetc(fp), "#") == 0)&&(!feof(fp))); // si el caracter es "#", descarto la linea completa, si salgo es porque leo el numero de la fila
         fgets(temp,50,fp)
-      *m->rows=c; //------------------
-       c = fgetc(fp);c = fgetc(fp); //TENGO QUE VER COMO CASTEAR EL CHAR A INT PARA ALMACENARLO EN ROWS Y COLS
-      *m->cols=c;//------------------- CHUSMEAR FUNCION "STRTOL"
-      
+      if(!feof(fp)){
+        p=&c; //almaceno direccion del caracter de la fila
+        num = (int) strtol(p,NULL,10); //convierto la fila a entero
+        *m->rows=num; //almaceno fila en la var fila del struct
+        c = fgetc(fp);c = fgetc(fp); 
+        p=&c; //almaceno direccion del caracter de la columna
+        num = (int) strtol(p,NULL,10); //convierto la columna a entero
+        *m->cols=c; // almaceno columna en la var column a del struct
+        *m->matriz=malloc(sizeof(double)*(*m->rows)); //Asigno memoria para la matriz
+        for(int i=0; i<(*m->cols); i++ ){ // ----
+          *m->matriz[i]=malloc(sizeof(double)*(*m->cols)); // .
+        }
 
-
-      
-       
-        
-      
-
+      for(int i=0; i<(*m->rows); i++ ){
+        for(int j=0; i<(*m->cols); j++ ){
+          c = fgetc(fp);
+          num2 = (double) strtol(p,NULL,10);
+          *m.matriz[i][j]=num2;
+        }
+      }
     }
-
+      
+      else {close(fp); return E_NOTIMPL_ERROR; }
+    }  
+      
+      else {close(fp); return E_FORMAT_ERROR; }
   }
-  return -E_NOTIMPL_ERROR;      
+  close(fp);
+  return -E_OK;   
 }
 
 error_t write_matrix(FILE *fp, const matrix_t *m)
