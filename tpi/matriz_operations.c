@@ -54,6 +54,7 @@ error_t read_matrix(FILE *fp, matrix_t *m){
       for(int i=0; i<(*m->rows); i++ ){ //Asigno valores a la matriz , cant de filas y columnas exactas que poseia el archivo
         for(int j=0; i<(*m->cols); j++ ){
           fscanf(fichero, "%lf", &num2);
+           c = fgetc(fp); //leo el espacio
           *m.matriz[i][j]=num2;
         }
       }
@@ -70,31 +71,40 @@ error_t read_matrix(FILE *fp, matrix_t *m){
 
 error_t write_matrix(FILE *fp, const matrix_t *m)
 {
-  char temp = 50; //para leer de a lineas
+  
   int c; //para leer de a caracteres
-  char *p; //puntero para utilizar en la funcion strtol
-  int num; //entero para almacenar el entero devuelto por strtool
-  double num2; //double para cargar a la matriz
-
-  fp = fopen ("M1.txt", "a");
-  if(fp==NULL)
-    return 1; //error desconocido
-  else{
-    if(*m->fmt==1){
-      fwrite(fp, "M1" . PHP_EOL);
-
-    }
+ 
+  if(m != NULL){
+    fp = fopen ("M1.txt", "a");
+    if(fp==NULL)
+     return 1; //error desconocido
     else{
 
+      if(*m->fmt==1){
+        fwrite(fp, "M1" . PHP_EOL);
+        fprintf(fp,"%d",*m.rows);
+        fputc (" ",fp);
+        fprintf(fp,"%d\n",*m.cols);
+        for(int i=0; i<(*m->rows); i++ ){ //Asigno valores a la matriz , cant de filas y columnas exactas que poseia el archivo
+          for(int j=0; i<(*m->cols); j++ ){
+            fprintf(fp,"%lf",*m.matriz[i][j]);
+            fputc(" ",fp);
+        }
+      }
+      fclose(fp); return -E_OK;
+    }
+    else{
+        //procesar matriz tipo2
     }
   }
-  
+  }
+    return -E_NOTIMPL_ERROR;  
+}    
 
-  return -E_NOTIMPL_ERROR;      
-}
 
 error_t dup_matrix(const matrix_t *m_src, matrix_t **m_dst)
 {
+  m_dst=malloc(sizeof(char)*4);
   return -E_NOTIMPL_ERROR;      
 }
 
