@@ -112,14 +112,47 @@ error_t dup_matrix(const matrix_t *m_src, matrix_t **m_dst)
   return -E_NOTIMPL_ERROR;      
 }
 
+
 error_t sum(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
 {
-  return -E_NOTIMPL_ERROR;      
+
+  if(*ma->rows==*mb->rows){
+    if(*ma->cols==*mb->cols){
+        //mc=malloc(sizeof(char)*4);
+        **mc->matriz=malloc(sizeof(double)*(**mc->rows)); //Asigno memoria para la matriz
+        for(int i=0; i<(**mc->cols); i++ )// ----
+          **mc->matriz[i]=malloc(sizeof(double)*(**mc->cols)); // .
+        for(int i=0; i<(*ma->rows); i++ ){ //Asigno valores a la matriz , cant de filas y columnas exactas que poseia el archivo
+          for(int j=0; i<(*ma->cols); j++ ){
+            **mc->matriz[i][j]=(*ma->matriz[i][j])+(*mb->matriz[i][j]);
+          }
+        }
+        return -E_OK;
+    }
+    else
+      return -E_SIZE_ERROR;
+  }
+  else
+    return -E_SIZE_ERROR;
+    
 }
 
 error_t sum_inplace(const matrix_t *m_src, matrix_t *m_dst)
 {
-  return -E_NOTIMPL_ERROR;      
+  if(*m_src->rows==*m_dst->rows){
+    if(*m_src->cols==*m_dst->cols){
+        for(int i=0; i<(*m_src->rows); i++ ){ //Asigno valores a la matriz , cant de filas y columnas exactas que poseia el archivo
+          for(int j=0; i<(*m_src->cols); j++ ){
+            *m_dst->matriz[i][j]=(*m_src->matriz[i][j])+(*m_dst->matriz[i][j]);
+          }
+        }
+        return -E_OK;
+    }
+    else
+      return -E_SIZE_ERROR;
+  }
+  else
+    return -E_SIZE_ERROR;     
 }
 
 error_t mult_scalar(T_TYPE a, const matrix_t *mb, matrix_t **mc)
