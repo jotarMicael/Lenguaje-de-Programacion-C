@@ -29,7 +29,7 @@ typedef struct matrix {
 error_t read_matrix(FILE *fp, matrix_t *m);
 
 /***
- * Almacena la matriz en un archivo. El origen es "mc".
+ * Almacena la matriz en un archivo. El origen es "m".
  */
 error_t write_matrix(FILE *fp, const matrix_t *m);
 
