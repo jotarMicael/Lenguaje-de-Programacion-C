@@ -105,6 +105,10 @@ error_t write_matrix(FILE *fp, const matrix_t *m)
 error_t dup_matrix(const matrix_t *m_src, matrix_t **m_dst)
 {
   m_dst=malloc(sizeof(char)*4);
+  if((m_dst!=NULL)&&(m_src!=NULL){
+    *m_dst=&msrc;
+     return -E_OK;
+  }
   return -E_NOTIMPL_ERROR;      
 }
 
