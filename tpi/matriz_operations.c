@@ -301,7 +301,7 @@ error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
         return -E_SIZE_ERROR;
     }
 
-    mc=matrix_create(*ma->cols,*mb->rows,*ma->fmt);
+    mc=matrix_create(ma->cols,mb->rows,ma->fmt);
     if(mc == NULL)
     {
         return -E_ALLOC_ERROR;
@@ -328,12 +328,29 @@ error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
 
 error_t set_elem_matrix(unsigned int row, unsigned int col, T_TYPE value, matrix_t **m)
 {
+  if (m!=NULL){
+      if(row<=m->rows)&&(col<=m->cols){
+        m->matriz[row][col]=value;
+        return -E_OK;
+      }
+      else
+        return -E_SIZE_ERROR;
+  }
   return -E_NOTIMPL_ERROR;      
 }
 
 error_t get_elem_matrix(unsigned int row, unsigned int col, T_TYPE *value, const matrix_t *m)
 {
-  return -E_NOTIMPL_ERROR;      
+  if (m!=NULL){
+      if(row<=m->rows)&&(col<=m->cols){
+        value=m->matriz[row][col];
+        return -E_OK;
+      }
+      else
+        return -E_SIZE_ERROR;
+  }
+  return -E_NOTIMPL_ERROR;   
+    
 }
 
 int cmp_matrix(const matrix_t *ma, const matrix_t *mb)
@@ -360,6 +377,14 @@ int cmp_matrix(const matrix_t *ma, const matrix_t *mb)
 
 error_t free_matrix(matrix_t **m)
 {
+  if(m!=NULL){
+  int i;
+    for(i = 0; i < *m->rows; i++)
+        FREE(*m->cols[i]);
+    FREE(*m->cols);
+    FREE(m);
+    return -E_OK;
+  }
   return -E_NOTIMPL_ERROR;      
 }
 
