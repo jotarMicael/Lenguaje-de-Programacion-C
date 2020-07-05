@@ -23,6 +23,8 @@ typedef struct matrix {
             int rows,cols;
             double **matriz;
          }  matrix_t;
+
+error_t matrix_create(int n, int m, matrix_t *m);
 /***
  * Carga la matriz desde un archivo. El resultado queda en "m".
  */
