@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include "list.h"
+#include "list_t.h"
 
-void list_new(lista_t *l){
+void list_new(list_t *l){
 
 	l=NULL;
 
 }
 
 
-lista_t *lista_append(lista_t *l, int dato){
+list_t *lista_append(list_t *l, int dato){
 
 	nodo_t *nuevoNodo, *aux,*ant;
 	nuevoNodo=malloc(sizeof(nodo_t));
@@ -34,13 +34,13 @@ lista_t *lista_append(lista_t *l, int dato){
 
 }
 
-void destroy_list(lista_t *l){
+void destroy_list(list_t *l){
 
 	free(l);
 	l==NULL;
 }
 
-bool is_Void(lista_t *l){
+bool is_Void(list_t *l){
 
 	if(l==NULL)
 		return true;
@@ -49,9 +49,9 @@ bool is_Void(lista_t *l){
 
 }
 
-lista_t *remove_List(lista_t *l, int dato){
+list_t *remove_List(list_t *l, int dato){
 
-	lista_t *aux,*ante;
+	list_t *aux,*ante;
 
 	if((l!=NULL) && (l->dato==dato)){
 
@@ -79,9 +79,9 @@ lista_t *remove_List(lista_t *l, int dato){
 	return l;
 }
 
-bool exist(lista_t *l, int dato){
+bool exist(list_t *l, int dato){
 
-lista_t *aux;
+list_t *aux;
 
 aux=l;
 

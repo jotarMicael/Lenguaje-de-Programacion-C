@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "matriz.h"
+#include "list_t.h"
 
 matrix_t *matrix_create(int n, int m, matrix_fmt_t c)
 {
@@ -407,7 +408,7 @@ error_t clear_matrix(matrix_t *m)
   
 error_t get_row(unsigned int pos, const matrix_t *ma, list_t *l)
 {
-  
+
   return -E_NOTIMPL_ERROR;      
 }
 
