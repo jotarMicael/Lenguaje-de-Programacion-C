@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "matriz.h"
 
-matrix_t *matrix_create(int n, int m, char c)
+matrix_t *matrix_create(int n, int m, matrix_fmt_t c)
 {
     int i;
     matrix_t *M;
@@ -15,7 +15,7 @@ matrix_t *matrix_create(int n, int m, char c)
 
     M->rows = m; //filas  
     M->cols = n; //columnas
-    if (strcmp(c, "1")==0)
+    if (c==M1)
       M->fmt = M1;
     else
       M->fmt = M2;
@@ -71,7 +71,7 @@ error_t read_matrix(char *filename,FILE *fp, matrix_t *m){
         c = fgetc(fp);c = fgetc(fp);
         n= (int) strtol(p,NULL,10); //convierto la columna a entero
         cols=n;
-        m = matrix_create(rows, cols,"1");
+        m = matrix_create(rows, cols,*m->fmt);
         if(m == NULL){
           return -E_ALLOC_ERROR;
         }
@@ -120,7 +120,6 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
     if(fp==NULL)
      return 1; //error desconocido
     else{
-
       if(*m->fmt==1){
         fwrite(fp, "M1" . PHP_EOL);
         fprintf(fp,"%d",*m.rows);
@@ -157,12 +156,9 @@ error_t dup_matrix(const matrix_t *m_src, matrix_t **m_dst)
 error_t sum(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
 {
 
-  if(*ma->matriz==*mb->matriz){
+  if(*ma->rows==*mb->rows){
     if(*ma->cols==*mb->cols){
-        //mc=malloc(sizeof(char)*4);
-        **mc->matriz=malloc(sizeof(double)*(**mb->matriz)); //Asigno memoria para la matriz
-        for(int i=0; i<(**mc->cols); i++ )// ----
-          **mc->matriz[i]=malloc(sizeof(double)*(**mb->cols)); // .
+        mc=matrix_create(*ma->rows,*ma->cols,*ma->fmt);
         for(int i=0; i<(*ma->matriz); i++ ){ //Asigno valores a la matriz , cant de filas y columnas exactas que poseia el archivo
           for(int j=0; i<(*ma->cols); j++ ){
             **mc->matriz[i][j]=(*ma->matriz[i][j])+(*mb->matriz[i][j]);
