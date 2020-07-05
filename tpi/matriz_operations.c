@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "matriz.h"
 
-matrix_t *matrix_create(int n, int m)
+matrix_t *matrix_create(int n, int m, char c)
 {
     int i;
     matrix_t *M;
@@ -15,6 +15,10 @@ matrix_t *matrix_create(int n, int m)
 
     M->rows = m; //filas  
     M->cols = n; //columnas
+    if (strcmp(c, "1")==0)
+      M->fmt = M1;
+    else
+      M->fmt = M2;
 
     M->matriz = malloc(n * sizeof(float *));
     if(M->matriz== NULL)
@@ -43,79 +47,86 @@ error_t get_ffmt_matrix(matrix_t *m, matrix_fmt_t  *fmt)
   return -E_NOTIMPL_ERROR;      
 }
 
-error_t read_matrix(FILE *fp, matrix_t *m){
+error_t read_matrix(char *filename,FILE *fp, matrix_t *m){
+{
+    int c,ni, mj, i, j,rows,cols;
+    char line[100000];
+    char num[1000];
+    char *p;
 
-  char temp = 50; //para leer de a lineas
-  int c,rows,cols; //para leer de a caracteres
-  char *p; //puntero para utilizar en la funcion strtol
-  int num; //entero para almacenar el entero devuelto por strtool
-  double num2; //double para cargar a la matriz
-
-  fp = fopen ("M1.txt", "r"); //abro el archivo de texto
-  if (fp==NULL){  // si no es de texto, me fijo si es binario
-    fp = fopen ("M2.bin", "rb"); //abro el binario
-    if (fp==NULL)
-  	  return -E_FORMAT_ERROR; //retorna error si no abre ni el archivo binario ni texto
-    //procesando archivo binario
-  }
-  //procesando archivo de texto
-
-  if(!feof(fp)){ //mientras no termine el archivo
-  	if (strcmp(fgets(temp,50,fp), "M1") == 0) { //leo la primera linea, y me fijo si dice M1
-      m=(m*)malloc(sizeof(matrix_t)); //reservo memoria para el puntero al struct matrix
-      if(m==NULL)
-        return -E_SIZE_ERROR;
-      *m->fmt = M1; // coloco el valor M1 , al formato de matriz
-      while ((strcmp(c = fgetc(fp), "#") == 0)&&(!feof(fp))); // si el caracter es "#", descarto la linea completa, si salgo es porque leo el numero de la fila
-        fgets(temp,50,fp);
-      if (feof(fp))
-        return -E_SIZE_ERROR;
-      else{
+    fp = fopen(filename,"r");
+    if(fp == NULL)
+    {
+        printf("Error al abrir archivo");
+        return -E_FILE_ERROR:
+    }
+    if (strcmp(fgets(temp,50,fp), "M1") == 0){ //PROCESO MATRIZ M1
+        while ((strcmp(c = fgetc(fp), "#") == 0)&&(!feof(fp))); // si el caracter es "#", descarto la linea completa, si salgo es porque leo el numero de la fila
+          fgets(temp,50,fp);
+        if (feof(fp))
+          return -E_FORMAT_ERROR;
         p=&c; //almaceno direccion del caracter
-        num = (int) strtol(p,NULL,10); //convierto la fila a entero
-        rows=c; //almaceno fila en la var fila del struct
+        n= (int) strtol(p,NULL,10); //convierto la fila a entero
+        rows=n; //almaceno fila en la var fila del struct
         c = fgetc(fp);c = fgetc(fp);
-        num = (int) strtol(p,NULL,10); //convierto la columna a entero
-        cols=c; // almaceno columna en la var cols del struct
-        m=matrix_create(rows,cols);
-        if(m==NULL)
+        n= (int) strtol(p,NULL,10); //convierto la columna a entero
+        cols=n;
+        m = matrix_create(rows, cols,"1");
+        if(m == NULL){
           return -E_ALLOC_ERROR;
         }
-      for(int i=0; i<(*m->matriz); i++ ){ //Asigno valores a la matriz , cant de filas y columnas exactas que poseia el archivo
-        for(int j=0; i<(*m->cols); j++ ){
-          fscanf(fichero, "%lf", &num2);
-           c = fgetc(fp); //leo el espacio
-          *m.matriz[i][j]=num2;
-        }
-      }
-    }
-    fclose(fp);  
-    return E_OK; 
-    }  
-    else
-     {fclose(fp); return E_FORMAT_ERROR; }
-  }
-  fclose(fp);
-  return -E_OK;   
-}
+        for(ni = 0; ni < rows; ni++){
 
-error_t write_matrix(FILE *fp, const matrix_t *m)
+          fgets(line, 100000, fp); 
+          i = 0;
+          mj = 0;
+
+          while(mj < cols) {
+            j = 0;
+
+            while(line[i] != ' ' && line[i] != '\n') {
+                num[j] = line[i];
+                j++;
+                i++;
+            }
+
+            i++;
+            num[j] = '\0';
+            m->matriz[ni][mj] = atof(num);
+            mj++;
+            j = 0;
+          }
+        }
+                
+    fclose(fp);
+    return -E_OK;
+      
+    }
+
+    else { //Procesar matriz M2
+
+
+    }
+
+    
+
+error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
 {
-  
+  int i,j;
   int c; //para leer de a caracteres
  
   if(m != NULL){
-    fp = fopen ("M1.txt", "a");
+    fp = fopen (filename, "a");
     if(fp==NULL)
      return 1; //error desconocido
     else{
 
       if(*m->fmt==1){
         fwrite(fp, "M1" . PHP_EOL);
-        fprintf(fp,"%d",*m.matriz);
+        fprintf(fp,"%d",*m.rows);
         fputc (" ",fp);
         fprintf(fp,"%d\n",*m.cols);
-        for(int i=0; i<(*m->matriz); i++ ){ //Asigno valores a la matriz , cant de filas y columnas exactas que poseia el archivo
+        for(int i=0; i<(*m->rows); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
           for(int j=0; i<(*m->cols); j++ ){
             fprintf(fp,"%lf",*m.matriz[i][j]);
             fputc(" ",fp);
