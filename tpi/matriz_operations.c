@@ -177,11 +177,11 @@ error_t sum(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
 error_t sum_inplace(const matrix_t *m_src, matrix_t *m_dst)
 {
   int i,j;
-  if(*m_src->rows==*m_dst->rows){
-    if(*m_src->cols==*m_dst->cols){
-        for(int i=0; i<(*m_src->rows); i++ ){ 
-          for(int j=0; i<(*m_src->cols); j++ ){
-            *m_dst->matriz[i][j]=(*m_src->matriz[i][j])+(*m_dst->matriz[i][j]);
+  if(m_src->rows==m_dst->rows){
+    if(m_src->cols==m_dst->cols){
+        for(int i=0; i<(m_src->rows); i++ ){ 
+          for(int j=0; i<(m_src->cols); j++ ){
+            m_dst->matriz[i][j]=(m_src->matriz[i][j])+(m_dst->matriz[i][j]);
           }
         }
         return -E_OK;
@@ -197,15 +197,15 @@ error_t mult_scalar(T_TYPE a, const matrix_t *mb, matrix_t **mc)
 {
   int i,j;
     if(mb!=NULL){
-        mc=matrix_create(*mb->rows,*mb->cols,*mb->fmt);
-        for(int i=0; i<(*mb->rows); i++ ){ 
-          for(int j=0; i<(*mb->cols); j++ ){
-            **mc->matriz[i][j]=(*mb->matriz[i][j])+a;
+        mc=matrix_create(mb->rows,mb->cols,mb->fmt);
+        for(int i=0; i<(mb->rows); i++ ){ 
+          for(int j=0; i<(mb->cols); j++ ){
+            *mc->matriz[i][j]=(mb->matriz[i][j])+a;
           }
         }
           return -E_OK;
     }
-    return -E_NOTIMPL_ERROR; 
+    return -E_ALLOC_ERROR; 
   
  }
       
@@ -213,12 +213,16 @@ error_t mult_scalar(T_TYPE a, const matrix_t *mb, matrix_t **mc)
 error_t mult_scalar_inplace(T_TYPE a, matrix_t *m_dst)
 {
   int i,j;
-  for(int i=0; i<(*m_dst->rows); i++ ){ 
-    for(int j=0; i<(*m_dst->cols); j++ ){
-      *m_dst->matriz[i][j]=(*m_dst->matriz[i][j])+a);
+  if (m!=NULL){
+  for(int i=0; i<(m_dst->rows); i++ ){ 
+    for(int j=0; i<(m_dst->cols); j++ ){
+      m_dst->matriz[i][j]=(m_dst->matriz[i][j])+a);
     }
   }
      return -E_OK;
+  }
+  else
+    return -E_ALLOC_ERROR;
           
 }
 
@@ -227,7 +231,7 @@ error_t create_and_fill_matrix(unsigned int rows, unsigned int cols, T_TYPE a, m
   int i,j;
   mb=matrix_create(rows,cols,*mb->fmt);
   if(mb!=NULL){
-    for(int i=0; i<(*mb->matriz); i++ ){ 
+    for(int i=0; i<(*mb->rows); i++ ){ 
           for(int j=0; i<(*mb->cols); j++ ){
             *mb->matriz[i][j]=a;
           }
@@ -264,11 +268,11 @@ error_t null_matrix(unsigned int n, matrix_t **mc)
 error_t idty_matrix(unsigned int n, matrix_t **m)
 {
   int i,j;
-  m=matrix_create(rows,cols,*mb->fmt);
-  if(mb!=NULL){
-    for(int i=0; i<(*mb->matriz); i++ ){ 
-          for(int j=0; i<(*mb->cols); j++ ){
-            *mb->matriz[i][j]=a;
+  m=matrix_create(n,n,*m->fmt);
+  if(m!=NULL){
+    for(int i=0; i<(*m->matriz); i++ ){ 
+          for(int j=0; i<(*m->cols); j++ ){
+            *m->matriz[i][j]=n*n;
           }
     }
     return -E_OK;
@@ -279,7 +283,47 @@ error_t idty_matrix(unsigned int n, matrix_t **m)
 
 error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
 {
-  return -E_NOTIMPL_ERROR;      
+  int n,m,i;
+  float fsum;
+    
+    if(ma == NULL)
+    {
+       return -E_ALLOC_ERROR;
+    }
+    if(mb == NULL)
+    {
+        return -E_ALLOC_ERROR;
+    }
+
+    if(ma->cols != mb->rows)
+    {
+        printf("Las matrices deben ser columna ma = fila mb");
+        return -E_SIZE_ERROR;
+    }
+
+    mc=matrix_create(*ma->cols,*mb->rows,*ma->fmt);
+    if(mc == NULL)
+    {
+        return -E_ALLOC_ERROR;
+    }
+
+    mc->cols = ma->cols;
+    mc->rows = mb->rows;
+
+    for(n = 0; n < mc->rows; n++)
+    {
+        for(m = 0; m < mc->cols; m++)
+        {
+            fsum = 0;
+            for(i=0; i<mc->cols; i++)
+            {
+                fsum = fsum + (ma->cols[n][i] * mb->cols[i][m]);
+            }
+            mc->cols[n][m] = fsum;
+        }
+    }
+    
+    return -E_OK;    
 }
 
 error_t set_elem_matrix(unsigned int row, unsigned int col, T_TYPE value, matrix_t **m)
