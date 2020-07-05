@@ -160,7 +160,7 @@ error_t sum(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
     if(*ma->cols==*mb->cols){
         mc=matrix_create(*ma->rows,*ma->cols,*ma->fmt);
         for(int i=0; i<(*ma->rows); i++ ){ 
-          for(int j=0; i<(*ma->cols); j++ ){
+          for(int j=0; j<(*ma->cols); j++ ){
             **mc->matriz[i][j]=(*ma->matriz[i][j])+(*mb->matriz[i][j]);
           }
         }
@@ -180,7 +180,7 @@ error_t sum_inplace(const matrix_t *m_src, matrix_t *m_dst)
   if(m_src->rows==m_dst->rows){
     if(m_src->cols==m_dst->cols){
         for(int i=0; i<(m_src->rows); i++ ){ 
-          for(int j=0; i<(m_src->cols); j++ ){
+          for(int j=0; j<(m_src->cols); j++ ){
             m_dst->matriz[i][j]=(m_src->matriz[i][j])+(m_dst->matriz[i][j]);
           }
         }
@@ -199,7 +199,7 @@ error_t mult_scalar(T_TYPE a, const matrix_t *mb, matrix_t **mc)
     if(mb!=NULL){
         mc=matrix_create(mb->rows,mb->cols,mb->fmt);
         for(int i=0; i<(mb->rows); i++ ){ 
-          for(int j=0; i<(mb->cols); j++ ){
+          for(int j=0; j<(mb->cols); j++ ){
             *mc->matriz[i][j]=(mb->matriz[i][j])+a;
           }
         }
@@ -215,7 +215,7 @@ error_t mult_scalar_inplace(T_TYPE a, matrix_t *m_dst)
   int i,j;
   if (m_dst!=NULL){
   for(int i=0; i<(m_dst->rows); i++ ){ 
-    for(int j=0; i<(m_dst->cols); j++ ){
+    for(int j=0; j<(m_dst->cols); j++ ){
       m_dst->matriz[i][j]=(m_dst->matriz[i][j])+a);
     }
   }
@@ -232,7 +232,7 @@ error_t create_and_fill_matrix(unsigned int rows, unsigned int cols, T_TYPE a, m
   mb=matrix_create(rows,cols,*mb->fmt);
   if(mb!=NULL){
     for(int i=0; i<(*mb->rows); i++ ){ 
-          for(int j=0; i<(*mb->cols); j++ ){
+          for(int j=0; j<(*mb->cols); j++ ){
             *mb->matriz[i][j]=a;
           }
     }
@@ -271,7 +271,7 @@ error_t idty_matrix(unsigned int n, matrix_t **m)
   m=matrix_create(n,n,*m->fmt);
   if(m!=NULL){
     for(int i=0; i<(*m->matriz); i++ ){ 
-          for(int j=0; i<(*m->cols); j++ ){
+          for(int j=0; j<(*m->cols); j++ ){
             *m->matriz[i][j]=n*n;
           }
     }
@@ -393,7 +393,7 @@ error_t clear_matrix(matrix_t *m)
   int i,j;
   if (m!=NULL){
   for(int i=0; i<(m->rows); i++ ){ 
-    for(int j=0; i<(m->cols); j++ ){
+    for(int j=0; j<(m->cols); j++ ){
       m->matriz[i][j]=0;
     }
   }
@@ -407,6 +407,7 @@ error_t clear_matrix(matrix_t *m)
   
 error_t get_row(unsigned int pos, const matrix_t *ma, list_t *l)
 {
+  
   return -E_NOTIMPL_ERROR;      
 }
 
