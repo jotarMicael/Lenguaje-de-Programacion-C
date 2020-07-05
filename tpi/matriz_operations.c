@@ -239,10 +239,10 @@ error_t create_and_fill_matrix(unsigned int rows, unsigned int cols, T_TYPE a, m
 
 }
 
-unsigned int get_matriz(const matrix_t *ma)
+unsigned int get_rows(const matrix_t *ma)
 {
   if (ma !=NULL)
-    return ma->matriz;
+    return ma->rows;
   else
     return 0;
 }
@@ -263,7 +263,18 @@ error_t null_matrix(unsigned int n, matrix_t **mc)
 
 error_t idty_matrix(unsigned int n, matrix_t **m)
 {
-  return -E_NOTIMPL_ERROR;      
+  int i,j;
+  m=matrix_create(rows,cols,*mb->fmt);
+  if(mb!=NULL){
+    for(int i=0; i<(*mb->matriz); i++ ){ 
+          for(int j=0; i<(*mb->cols); j++ ){
+            *mb->matriz[i][j]=a;
+          }
+    }
+    return -E_OK;
+  }
+
+  return -E_ALLOC_ERROR;     
 }
 
 error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
