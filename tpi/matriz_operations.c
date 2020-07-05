@@ -213,7 +213,7 @@ error_t mult_scalar(T_TYPE a, const matrix_t *mb, matrix_t **mc)
 error_t mult_scalar_inplace(T_TYPE a, matrix_t *m_dst)
 {
   int i,j;
-  if (m!=NULL){
+  if (m_dst!=NULL){
   for(int i=0; i<(m_dst->rows); i++ ){ 
     for(int j=0; i<(m_dst->cols); j++ ){
       m_dst->matriz[i][j]=(m_dst->matriz[i][j])+a);
@@ -390,6 +390,18 @@ error_t free_matrix(matrix_t **m)
 
 error_t clear_matrix(matrix_t *m)
 {
+  int i,j;
+  if (m!=NULL){
+  for(int i=0; i<(m->rows); i++ ){ 
+    for(int j=0; i<(m->cols); j++ ){
+      m->matriz[i][j]=0;
+    }
+  }
+     return -E_OK;
+  }
+  else
+    return -E_ALLOC_ERROR;
+
   return -E_NOTIMPL_ERROR;      
 }
   
