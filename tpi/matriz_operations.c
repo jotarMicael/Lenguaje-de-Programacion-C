@@ -159,7 +159,7 @@ error_t sum(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
   if(*ma->rows==*mb->rows){
     if(*ma->cols==*mb->cols){
         mc=matrix_create(*ma->rows,*ma->cols,*ma->fmt);
-        for(int i=0; i<(*ma->rows); i++ ){ //Asigno valores a la matriz , cant de filas y columnas exactas que poseia el archivo
+        for(int i=0; i<(*ma->rows); i++ ){ 
           for(int j=0; i<(*ma->cols); j++ ){
             **mc->matriz[i][j]=(*ma->matriz[i][j])+(*mb->matriz[i][j]);
           }
@@ -179,7 +179,7 @@ error_t sum_inplace(const matrix_t *m_src, matrix_t *m_dst)
   int i,j;
   if(*m_src->rows==*m_dst->rows){
     if(*m_src->cols==*m_dst->cols){
-        for(int i=0; i<(*m_src->rows); i++ ){ //Asigno valores a la matriz , cant de filas y columnas exactas que poseia el archivo
+        for(int i=0; i<(*m_src->rows); i++ ){ 
           for(int j=0; i<(*m_src->cols); j++ ){
             *m_dst->matriz[i][j]=(*m_src->matriz[i][j])+(*m_dst->matriz[i][j]);
           }
@@ -198,7 +198,7 @@ error_t mult_scalar(T_TYPE a, const matrix_t *mb, matrix_t **mc)
   int i,j;
     if(mb!=NULL){
         mc=matrix_create(*mb->rows,*mb->cols,*mb->fmt);
-        for(int i=0; i<(*mb->matriz); i++ ){ //Asigno valores a la matriz , cant de filas y columnas exactas que poseia el archivo
+        for(int i=0; i<(*mb->rows); i++ ){ 
           for(int j=0; i<(*mb->cols); j++ ){
             **mc->matriz[i][j]=(*mb->matriz[i][j])+a;
           }
@@ -213,7 +213,7 @@ error_t mult_scalar(T_TYPE a, const matrix_t *mb, matrix_t **mc)
 error_t mult_scalar_inplace(T_TYPE a, matrix_t *m_dst)
 {
   int i,j;
-  for(int i=0; i<(*m_dst->rows); i++ ){ //Asigno valores a la matriz , cant de filas y columnas exactas que poseia el archivo
+  for(int i=0; i<(*m_dst->rows); i++ ){ 
     for(int j=0; i<(*m_dst->cols); j++ ){
       *m_dst->matriz[i][j]=(*m_dst->matriz[i][j])+a);
     }
@@ -222,9 +222,21 @@ error_t mult_scalar_inplace(T_TYPE a, matrix_t *m_dst)
           
 }
 
-error_t create_and_fill_matrix(unsigned int matriz, unsigned int cols, T_TYPE a, matrix_t **mb)
+error_t create_and_fill_matrix(unsigned int rows, unsigned int cols, T_TYPE a, matrix_t **mb)
 {
-  return -E_NOTIMPL_ERROR;      
+  int i,j;
+  mb=matrix_create(rows,cols,*mb->fmt);
+  if(mb!=NULL){
+    for(int i=0; i<(*mb->matriz); i++ ){ 
+          for(int j=0; i<(*mb->cols); j++ ){
+            *mb->matriz[i][j]=a;
+          }
+    }
+    return -E_OK;
+  }
+
+  return -E_ALLOC_ERROR;
+
 }
 
 unsigned int get_matriz(const matrix_t *ma)
