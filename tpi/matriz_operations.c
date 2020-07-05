@@ -120,7 +120,7 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
     if(fp==NULL)
      return 1; //error desconocido
     else{
-      if(*m->fmt==1){
+      if(*m->fmt==M1){
         fwrite(fp, "M1" . PHP_EOL);
         fprintf(fp,"%d",*m.rows);
         fputc (" ",fp);
@@ -144,7 +144,7 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
 
 error_t dup_matrix(const matrix_t *m_src, matrix_t **m_dst)
 {
-  m_dst=malloc(sizeof(char)*4);
+  m_dst=matrix_create(*m_src->rows,*m_src->cols,*m_src->fmt);
   if((m_dst!=NULL)&&(m_src!=NULL){
     *m_dst=&msrc;
      return -E_OK;
