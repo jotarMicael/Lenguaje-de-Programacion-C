@@ -411,11 +411,12 @@ error_t get_row(unsigned int pos, const matrix_t *ma, list_t *l)
   int j;
   list_t aux;
   if((pos<ma.rows)&&(pos>=0)){
-    list_new(aux);
     if(ma!=NULL)&&(l!=NULL){
+    list_new(aux);
     for(int j=0; j<(ma->cols); j++ ){
       l=list_append(aux,m->matriz[pos][j]);
     }
+    destroy_list(aux);
     return -E_OK;
     }
     return -E_NOTIMPL_ERROR;  
@@ -430,21 +431,27 @@ error_t get_col(unsigned int pos, const matrix_t *ma, list_t *l)
   int i;
   list_t aux;
   if((pos<ma.cols)&&(pos>=0)){
-    list_new(aux);
     if(ma!=NULL)&&(l!=NULL){
+    list_new(aux);
     for(int i=0; i<(ma->rows); j++ ){
       l=list_append(aux,m->matriz[i][pos]);
     }
+    destroy_list(aux);
     return -E_OK;
     }
     return -E_NOTIMPL_ERROR;  
   }
   return -E_SIZE_ERROR;
-  return -E_NOTIMPL_ERROR;  
+  
 }
 
 error_t matrix2list(const matrix_t *ma, list_t *l)
 {
+  list_t aux;
+  if((ma!=NULL)&&(l!=NULL)){
+    list_t
+
+  }
   return -E_NOTIMPL_ERROR;      
 }
 
