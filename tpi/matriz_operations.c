@@ -447,11 +447,19 @@ error_t get_col(unsigned int pos, const matrix_t *ma, list_t *l)
 
 error_t matrix2list(const matrix_t *ma, list_t *l)
 {
-  list_t aux;
-  if((ma!=NULL)&&(l!=NULL)){
-    list_t
+    int i,j;
+    list_t aux;
+    if (ma!=NULL)&&(l!=NULL){ 
+      list_new(aux);
+      for(int i=0; i<(m->rows); i++ ){ 
+        for(int j=0; j<(m->cols); j++ ){
+          l=list_append(aux,m->matriz[i][j]);
+        }
+      }
+      destroy_list(aux);
+      return -E_OK;
+    }
 
-  }
   return -E_NOTIMPL_ERROR;      
 }
 
