@@ -29,10 +29,10 @@ matrix_t *matrix_create(int n, int m, matrix_fmt_t c)
     for(i = 0; i < n; i++)
     {
         M->matriz[i] = malloc(m * sizeof(float));
-        if(M->matriz[i] == NULL)
-        {
+        if(M->matriz[i] == NULL){
             return NULL;
         }
+
     }
     
     return M;
@@ -99,7 +99,6 @@ error_t read_matrix(char *filename,FILE *fp, matrix_t *m){
                 j++;
                 i++;
             }
-
             i++;
             num[j] = '\0';
             m->matriz[ni][mj] = atof(num);
@@ -271,6 +270,7 @@ unsigned int get_cols(const matrix_t *ma)
 
 error_t null_matrix(unsigned int n, matrix_t **mc)
 {
+
   return create_and_fill_matrix(n, n, V_NULL, mc);
 }
 
@@ -363,27 +363,28 @@ error_t get_elem_matrix(unsigned int row, unsigned int col, T_TYPE *value, const
     
 }
 
-int cmp_matrix(const matrix_t *ma, const matrix_t *mb)
-{
-  int complete_me = 1;
-  if ( (mb->matriz != ma->matriz) || (mb->cols != ma->cols) )
-    {
+int cmp_matrix(const matrix_t *ma, const matrix_t *mb){
+  int complete_me= 1;
+  if ( (mb->rows != ma->rows) || (mb->cols != ma->cols) ){
       return 0;
-    }
-  else
-    {
-      for(int i=0;i<(mb->matriz)*(mb->cols);i++)
-	{
+  }
+  else{
+     // for(int i=0;i<(mb->matriz)*(mb->cols);i++){
 	  //if ( mb->contents[i] !=  ma->contents[i])
 	  //if ((mb->contents[i] - ma->contents[i]) >=  V_DELTA_PRECS)
-	  if (complete_me)
-	    {
-	      return 0;
-	    }
-	}
-      return 1;
+    for (int i = 0; i < ma->rows; x++) {
+      for (int j = 0; j < ma->cols; y++) {
+        if (ma->matriz[i][j] != mb->matriz2[i][j]){
+          complete_me= 0;
+          return complete_me;
+        } //retorna 0 si son diferentes
+      }
     }
+	  
+      return complete_me; //retorna 1 si son iguales
+	  }
 }
+
 
 error_t free_matrix(matrix_t **m)
 {
@@ -475,4 +476,37 @@ error_t matrix2list(const matrix_t *ma, list_t *l)
 error_t resize_matrix(unsigned int newmatriz, unsigned int newcols, matrix_t **ma)
 {
   return -E_NOTIMPL_ERROR;  
+}
+
+
+
+void redimensionar(int **ma, int newrows,int newcols){
+
+int *aux = matriz_create (newrows, newcols, *ma-> fmt );//creo la matriz nueva
+int n=newrows; 
+int m=newcols;
+if(newrows>*ma->rows)||(newcols>*ma->cols){// en caso de que la nueva dimension sea mas grande que la actual
+    if(newrows>*ma->rows)
+        n=newrows-*ma->rows; //pongo nuevos limites de carga
+    if(newcols>*ma->cols)
+        m=newcols-*ma->cols;
+    for(int i = 0; i <*ma->rows; i++){ 
+      for(int j = 0; j <*ma->cols; j++)
+            aux[i][j] = *ma[i][j];
+    }
+    for(int i = *ma->rows; i <=n; i++){ 
+      for(int j = *ma->cols; j <=m; j++)
+            aux[i][j] = 2.34;
+    }
+}
+else{
+for(int i = 0; i < n ; i++){ 
+  for(int j = 0; j < m ; j++)
+            aux[i][j] = *ma[i][j];
+    }
+    free_matrix(ma);//deberia eliminar y liberar la memoria de la vieja matriz 
+
+   ma=&aux; //y actualizar la matriz que devuelvo
+}
+   
 }
