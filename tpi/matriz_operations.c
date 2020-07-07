@@ -49,6 +49,11 @@ error_t set_ffmt_matrix(matrix_t *m,matrix_fmt_t  fmt)
 
 error_t get_ffmt_matrix(matrix_t *m, matrix_fmt_t  *fmt)
 {
+  if(m!=NULL){
+    fmt=malloc(n * sizeof(matrix_fmt_t *))
+    fmt=m->fmt;
+    return -E_OK;
+  }
   return -E_NOTIMPL_ERROR;      
 }
 
@@ -63,7 +68,7 @@ error_t read_matrix(char *filename,FILE *fp, matrix_t *m){
     if(fp == NULL)
     {
         printf("Error al abrir archivo");
-        return -E_FILE_ERROR:
+        return -E_FILE_ERROR;
     }
     if (strcmp(fgets(temp,50,fp), "M1") == 0){ //PROCESO MATRIZ M1
         while ((strcmp(c = fgetc(fp), "#") == 0)&&(!feof(fp))); // si el caracter es "#", descarto la linea completa, si salgo es porque leo el numero de la fila
@@ -151,7 +156,7 @@ error_t dup_matrix(const matrix_t *m_src, matrix_t **m_dst)
 {
   m_dst=matrix_create(m_src->rows,m_src->cols,m_src->fmt);
   if((*m_dst!=NULL)&&(*m_src!=NULL){
-    m_dst=&m_src;
+     m_dst=&m_src;
      return -E_OK;
   }
   return -E_NOTIMPL_ERROR;      
@@ -236,8 +241,8 @@ error_t create_and_fill_matrix(unsigned int rows, unsigned int cols, T_TYPE a, m
   int i,j;
   *mb=matrix_create(rows,cols,*mb->fmt);
   if(*mb!=NULL){
-    for(int i=0; i<(*mb->rows); i++ ){ 
-          for(int j=0; j<(*mb->cols); j++ ){
+    for(int i=0; i<(*mb->rows);i++){ 
+          for(int j=0; j<(*mb->cols);j++){
             *mb->matriz[i][j]=a;
           }
     }
