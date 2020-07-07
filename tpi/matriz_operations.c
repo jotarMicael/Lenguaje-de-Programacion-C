@@ -40,6 +40,10 @@ matrix_t *matrix_create(int n, int m, matrix_fmt_t c)
 
 error_t set_ffmt_matrix(matrix_t *m,matrix_fmt_t  fmt)
 {
+  if(m!=NULL){
+    m->fmt=fmt;
+    return -E_OK;
+  }
   return -E_NOTIMPL_ERROR;      
 }
 
@@ -72,7 +76,7 @@ error_t read_matrix(char *filename,FILE *fp, matrix_t *m){
         c = fgetc(fp);c = fgetc(fp);
         n= (int) strtol(p,NULL,10); //convierto la columna a entero
         cols=n;
-        m = matrix_create(rows, cols,*m->fmt);
+        m = matrix_create(rows, cols,m->fmt);
         if(m == NULL){
           return -E_ALLOC_ERROR;
         }
@@ -123,7 +127,7 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
     else{
       if(m->fmt==M1){
         fwrite(fp, "M1" . PHP_EOL);
-        fprintf(fp,"%d",*m.rows);
+        fprintf(fp,"%d",m.rows);
         fputc (" ",fp);
         fprintf(fp,"%d\n",m.cols);
         for(int i=0; i<(m->rows); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
@@ -146,7 +150,7 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
 error_t dup_matrix(const matrix_t *m_src, matrix_t **m_dst)
 {
   m_dst=matrix_create(m_src->rows,m_src->cols,m_src->fmt);
-  if((*m_dst!=NULL)&&(m_src!=NULL){
+  if((*m_dst!=NULL)&&(*m_src!=NULL){
     m_dst=&m_src;
      return -E_OK;
   }
@@ -302,8 +306,8 @@ error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
         return -E_SIZE_ERROR;
     }
 
-    mc=matrix_create(ma->cols,mb->rows,ma->fmt);
-    if(mc == NULL)
+    *mc=matrix_create(ma->cols,mb->rows,ma->fmt);
+    if(*mc == NULL)
     {
         return -E_ALLOC_ERROR;
     }
