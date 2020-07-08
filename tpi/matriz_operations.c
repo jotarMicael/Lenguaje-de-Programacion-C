@@ -58,68 +58,11 @@ error_t get_ffmt_matrix(matrix_t *m, matrix_fmt_t  *fmt)
 }
 
 error_t read_matrix(char *filename,FILE *fp, matrix_t *m){
-{
-   /* int c,ni, mj, i, j,rows,cols;
-    char line[100000];
-    char num[1000];
-    char *p;
-
-    fp = fopen(filename,"r");
-    if(fp == NULL)
-    {
-        printf("Error al abrir archivo");
-        return -E_FILE_ERROR;
-    }
-    if (strcmp(fgets(temp,50,fp), "M1") == 0){ //PROCESO MATRIZ M1
-        while ((strcmp(c = fgetc(fp), "#") == 0)&&(!feof(fp))); // si el caracter es "#", descarto la linea completa, si salgo es porque leo el numero de la fila
-          fgets(temp,50,fp);
-        if (feof(fp))
-          return -E_FORMAT_ERROR;
-        p=&c; //almaceno direccion del caracter
-        n= (int) strtol(p,NULL,10); //convierto la fila a entero
-        rows=n; //almaceno fila en la var fila del struct
-        c = fgetc(fp);c = fgetc(fp);
-        n= (int) strtol(p,NULL,10); //convierto la columna a entero
-        cols=n;
-        m = matrix_create(rows, cols,m->fmt);
-        if(m == NULL){
-          return -E_ALLOC_ERROR;
-        }
-        for(ni = 0; ni < rows; ni++){
-
-          fgets(line, 100000, fp); 
-          i = 0;
-          mj = 0;
-
-          while(mj < cols) {
-            j = 0;
-
-            while(line[i] != ' ' && line[i] != '\n') {
-                num[j] = line[i];
-                j++;
-                i++;
-            }
-            i++;
-            num[j] = '\0';
-            m->matriz[ni][mj] = atof(num);
-            mj++;
-            j = 0;
-          }
-        }
-                
-    fclose(fp);
-    return -E_OK;
-      
-    } 
-
-    else { //Procesar matriz M2
-
-
-    }*/
 
  double dvalue;
- char   buf[1024];
- int rows,cols;
+ char buf[1024];
+ char num[1000];
+ int rows,cols,i,j,ni,mj;
  matrix_fmt_t fmt;
  // Open file
   
@@ -165,18 +108,43 @@ else{
   fprintf(stderr, "Error al leer las dimensiones\n");
   return -E_SIZE_ERROR;   
 }
-
+if(m==NULL){
+  return -E_ALLOC_ERROR;
+}
 
  //read matrix size information
  if (fscanf(fp, "%d %d", m->rows, m->cols) != 2) {
    fprintf(stderr, "Error en dimensiones \n");
    return -E_SIZE_ERROR
  }
- if(m->fmt==M1){ //proceso M1
+  
+
+    if(m->fmt==M1){ //proceso M1
+  
+        for(ni = 0; ni < m->rows; ni++){
+
+          fgets(buf, 100000, fp); 
+          i = 0;
+          mj = 0;
+
+          while(mj < m->cols) {
+            j = 0;
+
+            while(buf[i] != ' ' && buf[i] != '\n') {
+                num[j] = buf[i];
+                j++;
+                i++;
+            }
+            i++;
+            num[j] = '\0';
+            m->matriz[ni][mj] = atof(num);
+            mj++;
+            j = 0;
+          }
+        }
 
  }
  else{ //proceso M2
-    int i = 0;
     // (fread((T_TYPE*)&dvalue, sizeof(T_TYPE), 1, fp) == sizeof(T_TYPE))
     while (fscanf(fp,"%lf ",&dvalue) == 1){
       printf("%lf ",dvalue);
