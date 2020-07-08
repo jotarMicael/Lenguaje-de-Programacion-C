@@ -145,14 +145,17 @@ if(m==NULL){
 
  }
  else{ //proceso M2
-    // (fread((T_TYPE*)&dvalue, sizeof(T_TYPE), 1, fp) == sizeof(T_TYPE))
-    while (fscanf(fp,"%lf ",&dvalue) == 1){
-      printf("%lf ",dvalue);
-      i++;
-    }
- 
-    fclose(fp); 
-    return (0);
+      while (fread((double*)&dvalue, sizeof(double), 1, fp) == sizeof(double)){
+        for(int i=0; i<(m->rows); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
+          for(int j=0; i<(m->cols); j++ ){
+            m.matriz[i][j]=dvalue;
+            fread((double*)&dvalue, sizeof(double), 1, fp);
+        }
+      }
+        
+      }
+      fclose(fp); 
+      return -E_OK;
  }
 }  
 

@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
  fprintf(fp2, "%d %d\n",rows,cols);
  
  // Para M2 (fread((double*)&dvalue, sizeof(double), 1, fp) == sizeof(double))
- while (fscanf(fp,"%lf ",&dvalue) == 1)
+ while (fread((double*)&dvalue, sizeof(double), 1, fp) == sizeof(double))
    {
      fprintf(fp2, "%lf ",dvalue);
    }
