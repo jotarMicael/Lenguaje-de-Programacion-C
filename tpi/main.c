@@ -43,22 +43,11 @@ main(int argc, char *argv)
     FILE *fp,*fp2,*errors;
 
     // Revisamos si hay suficientes entradas desde terminal
-    if (argc >12)
+    if (argc >7)
     {
         formato();
         return 0;
     }
-
-    // ¿Queremos impresión en pantalla?
-    print = 1;
-
-    /* Asignamos valores de la entrada a variables
-    n1 = atoi(argv[1]);
-    m1 = atoi(argv[2]);
-    f1 = argv[3];
-    n2 = atoi(argv[4]);
-    m2 = atoi(argv[5]);
-    f2 = argv[6]; */
 
     if(argv[1] == "--help"){
         help();
@@ -73,6 +62,27 @@ main(int argc, char *argv)
             error=output_error(errors,read_matrix(argv[4],fp,m2));
             if(error!=0)
                 return error; //Hubo error en carga de 2da matriz
+            if(argv[5]=="--op|-p"){
+                if(argv[6]=="sum")&&(argv[7]!=NULL){
+                    error=output_error(errors,sum(m1,m2,m3));
+                    if(error!=0)
+                        return error; //Hubo error en la suma
+                    error=output_error(errors,write_matrix((argv[7],fp2,m3)); //cargo m3 en el archivo
+                    if(error!=0)
+                        return error; //Hubo error en escritura de matriz
+                }
+                if(argv[6]=="mult")&&(argv[7]!=NULL){
+                    error=output_error(errors,mult(m1,m2,m3));
+                    if(error!=0)
+                        return error; //Hubo error en la multiplicacion
+                    error=output_error(errors,write_matrix((argv[7],fp2,m3)); //cargo m3 en el archivo
+                    if(error!=0)
+                        return error; //Hubo error en escritura de matriz
+                }
+
+            }
+            else
+                return output_error(errors,7);
             
          }
         else{
@@ -107,7 +117,7 @@ main(int argc, char *argv)
 
             }
             matrix_free(m1);matrix_free(m2);matrix_free(*m3);
-            return errors; //retorna cualquier otro error, o si salio bien.
+            return error; //retorna cualquier otro error, o si salio bien.
         }
     }
         else
