@@ -294,6 +294,7 @@ error_t sum(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
 error_t sum_inplace(const matrix_t *m_src, matrix_t *m_dst)
 {
   int i,j;
+  if((m_src!=NULL)&&(m_dst!=NULL)){
   if(m_src->rows==m_dst->rows){
     if(m_src->cols==m_dst->cols){
         for(int i=0; i<(m_src->rows); i++ ){ 
@@ -308,6 +309,9 @@ error_t sum_inplace(const matrix_t *m_src, matrix_t *m_dst)
   }
   else
     return -E_SIZE_ERROR;     
+}
+else
+    return -E_ALLOC_ERROR;
 }
 
 error_t mult_scalar(T_TYPE a, const matrix_t *mb, matrix_t **mc)
@@ -404,14 +408,11 @@ error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
   int n,m,i;
   float fsum;
     
-    if(ma == NULL)
-    {
+    if((ma == NULL)&&(mb == NULL)){
+
        return -E_ALLOC_ERROR;
     }
-    if(mb == NULL)
-    {
-        return -E_ALLOC_ERROR;
-    }
+  
 
     if(ma->cols != mb->rows)
     {
@@ -446,7 +447,7 @@ error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
 
 error_t set_elem_matrix(unsigned int row, unsigned int col, T_TYPE value, matrix_t **m)
 {
-  if (m!=NULL){
+  if (*m!=NULL){
       if(row<=*m->rows)&&(col<=*m->cols){
         *m->matriz[row][col]=value;
         return -E_OK;
@@ -474,22 +475,22 @@ error_t get_elem_matrix(unsigned int row, unsigned int col, T_TYPE *value, const
 int cmp_matrix(const matrix_t *ma, const matrix_t *mb){
   int complete_me= 1;
   if ( (mb->rows != ma->rows) || (mb->cols != ma->cols) ){
-      return 0;
+      return -E_SIZE_ERROR;
   }
+
   else{
      // for(int i=0;i<(mb->matriz)*(mb->cols);i++){
 	  //if ( mb->contents[i] !=  ma->contents[i])
 	  //if ((mb->contents[i] - ma->contents[i]) >=  V_DELTA_PRECS)
     for (int i = 0; i < ma->rows; x++) {
       for (int j = 0; j < ma->cols; y++) {
-        if (ma->matriz[i][j] != mb->matriz2[i][j]){
-          complete_me= 0;
-          return complete_me;
+        if (ma->matriz[i][j] != mb->matriz[i][j]){
+          return -E_SIZE_ERROR;
         } //retorna 0 si son diferentes
       }
     }
 	  
-      return complete_me; //retorna 1 si son iguales
+      return -E_OK; //retorna 1 si son iguales
 	  }
 }
 
@@ -501,7 +502,7 @@ error_t free_matrix(matrix_t **m)
     for(i = 0; i < *m->rows; i++)
         FREE(*m->cols[i]);
     FREE(*m->cols);
-    FREE(m);
+    FREE(*m);
     return -E_OK;
   }
   return -E_NOTIMPL_ERROR;      
@@ -569,9 +570,9 @@ error_t matrix2list(const matrix_t *ma, list_t *l)
     list_t aux;
     if (ma!=NULL)&&(l!=NULL){ 
       list_new(aux);
-      for(int i=0; i<(m->rows); i++ ){ 
-        for(int j=0; j<(m->cols); j++ ){
-          l=list_append(aux,m->matriz[i][j]);
+      for(int i=0; i<(ma->rows); i++ ){ 
+        for(int j=0; j<(ma->cols); j++ ){
+          l=list_append(aux,ma->matriz[i][j]);
         }
       }
       destroy_list(aux);
