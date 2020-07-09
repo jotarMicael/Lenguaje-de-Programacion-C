@@ -87,7 +87,10 @@ main(int argc, char *argv)
             }
              if (argv[3] == "idty"){
                  if((argv[4]=="--out|-o")&&(argv[5]!=NULL)){
-                    error=output_error(errors,idty_matrix(m1->rows,&m2)); //genero matriz identidad en m2
+                    if(m1.rows>=m1.cols)
+                        error=output_error(errors,idty_matrix(m1->rows,&m2)); //genero matriz identidad en m2 con rows
+                    else
+                        error=output_error(errors,idty_matrix(m1->cols,&m2)); //genero matriz identidad en m2 con cols
                     if(error!=0)
                         return error;
                     error=output_error(errors,write_matrix((argv[5],fp2,m2)); //cargo m2 en el archivo

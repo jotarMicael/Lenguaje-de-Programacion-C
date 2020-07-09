@@ -398,7 +398,7 @@ error_t idty_matrix(unsigned int n, matrix_t **m)
             if(i==j)
               *m->matriz[i][j]=1;
             else
-              *m->matriz[i][j]=1;  
+              *m->matriz[i][j]=0;  
           }
     }
     return -E_OK;
