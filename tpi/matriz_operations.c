@@ -60,7 +60,7 @@ error_t get_ffmt_matrix(matrix_t *m, matrix_fmt_t  *fmt)
 error_t read_matrix(char *filename,FILE *fp, matrix_t *m){
 
  double dvalue;
- char buf[1024];
+ char buf[N_BUF_LENGTH];
  char num[1000];
  int rows,cols,i,j,ni,mj;
  matrix_fmt_t fmt;
@@ -77,12 +77,12 @@ error_t read_matrix(char *filename,FILE *fp, matrix_t *m){
  if (fgets(buf, sizeof(buf), fp)!=NULL)
     {
       fprintf(stderr, "Error al leer header format\n");
-      return -1;      
+      return -E_FORMAT_ERROR;      
     }
  if (buf[0] != 'M' || (buf[1] != '1' && buf[1] != '2'))
    {
      fprintf(stderr, "Error de formato, debe ser ('M1 o M2')\n");
-     return -2;
+     return -E_FORMAT_ERROR;
    }
 if ((buf[0] == 'M') && (buf[1] == '1'))
     fmt=M1;
@@ -95,7 +95,7 @@ else
  if (fgets(buf, sizeof(buf), fp)!=NULL)
     {
       fprintf(stderr, "Error al leer header format\n");
-      return -1;      
+      return -E_FORMAT_ERROR;      
     }
 if (buf[0] == '#')
      fgets(buf, sizeof(buf), fp) //Buscar forma de volver para atras
@@ -161,7 +161,7 @@ if(m==NULL){
 
 error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
 {
-  int i,j;
+  /*int i,j;
   int c; //para leer de a caracteres
  
   if(m != NULL){
@@ -187,7 +187,75 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
     }
   }
   }
-    return -E_NOTIMPL_ERROR;  
+    return -E_NOTIMPL_ERROR;  */
+  char buf[N_BUF_LENGTH];
+  int rows,cols,res;
+
+  if(m!=NULL){
+     if (! (fp = fopen(filename,"w")) ){
+        perror("Error al abrir archivo de escritura");
+        exit(EXIT_FAILURE);  
+      }
+      //check the matrix header format
+
+    if ((m->fmt!='M1')||(m->fmt!='M2')) {
+      fprintf(stderr, "Error al leer header format\n");
+      fclose(fp); 
+      return -E_FORMAT_ERROR;      
+    }
+     if ((m->fmt!='M1'))
+        fprintf(fp, "%c\n",'M1')
+     else
+        fprintf(fp, "%c\n",'M2')  //escribo el formato de la matriz
+
+    
+    //read matrix size information
+      if(sizeof(m->cols)!=sizeof(int)&&(sizeof(m->rows)!=sizeof(int))){
+        fprintf(stderr, "Error en dimensiones \n");
+        fclose(fp); 
+        return -E_SIZE_ERROR;
+      }
+      fprintf(fp, "%d",m->rows);
+      fprintf(fp, "%c",' ');
+      fprintf(fp, "%d\n",m->cols); //escribo filas y columnas en archivo
+
+      
+
+      if(m->fmt=='M1'){ //proceso M1
+          for(int i=0; i<(m->rows); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
+                for(int j=0; i<(m->cols); j++ ){
+                  if(printf(fp,"%d",m->matriz[i][j])!=1){
+                    fclose(fp); 
+                    return -E_WRITE_ERROR;
+                  }
+                  fprintf(fp,"%c",' ');
+                }
+              } 
+
+      }
+
+      else{
+          if(m->fmt=='M2'){ //proceso M2
+              for(int i=0; i<(m->rows); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
+                for(int j=0; i<(m->cols); j++ ){
+                  res=fwrite(&m->matriz[i][j], sizeof(int), 1, fp);
+                  if(res==NULL){
+                    fclose(fp); 
+                    return -E_READ_ERROR;
+                  }
+                }
+              }  
+
+          }
+          else{
+              fclose(fp); 
+              return -E_SIZE_ERROR;
+          }
+      }
+    
+    fclose(fp); 
+    return -E_OK;
+  }
 }    
 
 
