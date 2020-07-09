@@ -2,6 +2,7 @@
 
 int output_error(FILE *fp, error_t e)
 {
+  fp = fopen ( "errors.txt", "w" ); 
   switch (e)
     {
   case -E_OK:
@@ -19,10 +20,13 @@ int output_error(FILE *fp, error_t e)
   case -E_NOTIMPL_ERROR:
     return fprintf(fp, "No implementado aun (NOTIMPL)");
   case -E_FILE_ERROR:
-    return fprintf(fp, "Error de archivo (FILE)");    
+    return fprintf(fp, "Error de archivo (FILE)");
+  case -E_INVALID_ERROR;
+    return fprintf(fp, "Error de parametro (PARAMETER)");   
   default:
     return fprintf(fp, "Error desconocido (UNKNOWN)");
     }
+  fclose(fp);
 }
 
 /*** EOF ***/

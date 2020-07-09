@@ -16,6 +16,7 @@ matrix_t *matrix_create(int n, int m, matrix_fmt_t c)
 
     M->rows = m; //filas  
     M->cols = n; //columnas
+
     if (c==M1)
       M->fmt = M1;
     else
@@ -85,9 +86,9 @@ error_t read_matrix(char *filename,FILE *fp, matrix_t *m){
      return -E_FORMAT_ERROR;
    }
 if ((buf[0] == 'M') && (buf[1] == '1'))
-    fmt=M1;
+    set_ffmt_matrix(m,M1)//fmt=M1;
 else
-    fmt=M2;
+    set_ffmt_matrix(m,M2)//fmt=M2;
  /****** 
  //Skip comments checking
  // discard_comments(fp);
