@@ -50,7 +50,7 @@ error_t set_ffmt_matrix(matrix_t *m,matrix_fmt_t  fmt)
 error_t get_ffmt_matrix(matrix_t *m, matrix_fmt_t  *fmt)
 {
   if(m!=NULL){
-    fmt=malloc(n * sizeof(matrix_fmt_t *))
+    fmt=malloc(n * sizeof(matrix_fmt_t *));
     fmt=m->fmt;
     return -E_OK;
   }
@@ -261,8 +261,8 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
 
 error_t dup_matrix(const matrix_t *m_src, matrix_t **m_dst)
 {
-  m_dst=matrix_create(m_src->rows,m_src->cols,m_src->fmt);
-  if((*m_dst!=NULL)&&(*m_src!=NULL){
+  *m_dst=matrix_create(m_src->rows,m_src->cols,m_src->fmt);
+  if((*m_dst!=NULL)&&(m_src!=NULL){
      m_dst=&m_src;
      return -E_OK;
   }
@@ -275,7 +275,7 @@ error_t sum(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
   int i,j;
   if(ma->rows==mb->rows){
     if(ma->cols==mb->cols){
-        mc=matrix_create(ma->rows,ma->cols,ma->fmt);
+        *mc=matrix_create(ma->rows,ma->cols,ma->fmt);
         for(int i=0; i<(ma->rows); i++ ){ 
           for(int j=0; j<(ma->cols); j++ ){
             *mc->matriz[i][j]=(ma->matriz[i][j])+(mb->matriz[i][j]);
@@ -408,7 +408,7 @@ error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
   int n,m,i;
   float fsum;
     
-    if((ma == NULL)&&(mb == NULL)){
+    if((ma==NULL)&&(mb==NULL)){
 
        return -E_ALLOC_ERROR;
     }
@@ -426,8 +426,8 @@ error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
         return -E_ALLOC_ERROR;
     }
 
-    *mc->cols = ma->cols;
-    *mc->rows = mb->rows;
+    *mc->cols=ma->cols;
+    *mc->rows=mb->rows;
 
     for(n = 0; n < *mc->rows; n++)
     {
@@ -436,7 +436,7 @@ error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
             fsum = 0;
             for(i=0; i<*mc->cols; i++)
             {
-                fsum = fsum + (ma->cols[n][i] * mb->cols[i][m]);
+                fsum = fsum + (ma->cols[n][i]) * (mb->cols[i][m]);
             }
             *mc->cols[n][m] = fsum;
         }
