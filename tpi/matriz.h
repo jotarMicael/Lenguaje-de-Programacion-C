@@ -20,7 +20,7 @@ typedef enum matrix_fmt {M1 = 1 , M2 , INVALID} matrix_fmt_t;
 
 typedef struct matrix {
             matrix_fmt_t  fmt;
-            int rows,cols;
+            unsigned int rows,cols;
             double **matriz;
          }  matrix_t;
 

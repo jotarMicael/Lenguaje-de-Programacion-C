@@ -391,11 +391,14 @@ error_t null_matrix(unsigned int n, matrix_t **mc)
 error_t idty_matrix(unsigned int n, matrix_t **m)
 {
   int i,j;
-  m=matrix_create(n,n,*m->fmt);
-  if(m!=NULL){
+  *m=matrix_create(n,n,*m->fmt);
+  if(*m!=NULL){
     for(int i=0; i<(*m->matriz); i++ ){ 
           for(int j=0; j<(*m->cols); j++ ){
-            *m->matriz[i][j]=n*n;
+            if(i==j)
+              *m->matriz[i][j]=1;
+            else
+              *m->matriz[i][j]=1;  
           }
     }
     return -E_OK;
