@@ -533,7 +533,7 @@ error_t get_row(unsigned int pos, const matrix_t *ma, list_t *l)
     if(ma!=NULL)&&(l!=NULL){
     list_new(aux);
     for(int j=0; j<(ma->cols); j++ ){
-      l=list_append(aux,m->matriz[pos][j]);
+      l=list_append(aux,ma->matriz[pos][j]);
     }
     destroy_list(aux);
     return -E_OK;
@@ -549,11 +549,12 @@ error_t get_col(unsigned int pos, const matrix_t *ma, list_t *l)
 {
   int i;
   list_t aux;
-  if((pos<ma.cols)&&(pos>=0)){
+
+  if((pos<ma->cols)&&(pos>=0)){
     if(ma!=NULL)&&(l!=NULL){
     list_new(aux);
     for(int i=0; i<(ma->rows); j++ ){
-      l=list_append(aux,m->matriz[i][pos]);
+      l=list_append(aux,ma->matriz[i][pos]);
     }
     destroy_list(aux);
     return -E_OK;
