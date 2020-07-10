@@ -64,7 +64,6 @@ main(int argc, char *argv)
                 return error; //Hubo error en null
             error=output_error(errors,write_matrix((argv[6],fp2,m3)); //cargo m3 en el archivo
             return error; //salgo del programa bien, o mal
-
         }
         if ((argv[3] == "--in2|-2")&&(argv[4]!=NULL)){
             error=output_error(errors,read_matrix(argv[4],fp,m2));
