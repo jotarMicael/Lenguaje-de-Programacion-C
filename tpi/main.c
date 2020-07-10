@@ -58,6 +58,14 @@ main(int argc, char *argv)
         error=output_error(errors,read_matrix(argv[2],fp,m1));
         if(error!=0)
             return error;//Hubo error en carga de 1era matriz
+        if ((argv[3] == "--op|-p")&&(argv[4]!="null")&&(argv[5]!="--out|-o")&&(argv[6]!=NULL){
+            error=output_error(errors,null_matrix(m1->rows,m3));
+            if(error!=0)
+                return error; //Hubo error en null
+            error=output_error(errors,write_matrix((argv[6],fp2,m3)); //cargo m3 en el archivo
+            return error; //salgo del programa bien, o mal
+
+        }
         if ((argv[3] == "--in2|-2")&&(argv[4]!=NULL)){
             error=output_error(errors,read_matrix(argv[4],fp,m2));
             if(error!=0)
