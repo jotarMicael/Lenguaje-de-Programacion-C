@@ -10,11 +10,11 @@
 
 
 #define T_TYPE         double
-#define S_TYPE_FMT     "%lf"
-#define S_TYPE_FMT2    "%8.4lf "
+//#define S_TYPE_FMT     "%lf"
+//#define S_TYPE_FMT2    "%8.4lf "
 #define V_NULL         0.0
 #define V_ONE          1.0
-#define V_DELTA_PRECS  0.00001
+//#define V_DELTA_PRECS  0.00001
 
 typedef enum matrix_fmt {M1 = 1 , M2 , INVALID} matrix_fmt_t;
 

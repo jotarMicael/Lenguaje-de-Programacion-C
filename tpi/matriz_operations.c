@@ -88,7 +88,8 @@ error_t read_matrix(char *filename,FILE *fp, matrix_t *m){
    if (!(fp = fopen(filename,"r")) )
    {
      return -E_FILE_ERROR;
-     
+
+
    }
  
  //check the matrix header format
@@ -116,7 +117,7 @@ else
       fprintf(stderr, "Error al leer header format\n");
       return -E_FORMAT_ERROR;      
     }
-if (buf[0] == '#')
+if (buf[0] == C_COMMENT)
      fgets(buf, sizeof(buf), fp) //Buscar forma de volver para atras
 
 if(fscanf(fp,"%d",&rows) == 1){
@@ -164,11 +165,11 @@ if(m==NULL){
 
  }
  else{ //proceso M2
-      while (fread((double*)&dvalue, sizeof(double), 1, fp) == sizeof(double)){
+      while (fread((T_TYPE*)&dvalue, sizeof(T_TYPE), 1, fp) == sizeof(T_TYPE)){
         for(int i=0; i<(get_rows(m)); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
           for(int j=0; i<(get_cols(m)); j++ ){
             m.matriz[i][j]=dvalue;
-            fread((double*)&dvalue, sizeof(double), 1, fp);
+            fread((T_TYPE*)&dvalue, sizeof(T_TYPE), 1, fp);
         }
       }
         
@@ -229,7 +230,7 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
 
     
     //read matrix size information
-      if(sizeof(m->cols)!=sizeof(int)&&(sizeof(m->rows)!=sizeof(int))){
+      if(sizeof(get_cols(m))!=sizeof(int)&&(sizeof(get_rows(m))!=sizeof(int))){
         fprintf(stderr, "Error en dimensiones \n");
         fclose(fp); 
         return -E_SIZE_ERROR;
@@ -399,9 +400,9 @@ error_t idty_matrix(unsigned int n, matrix_t **m)
     for(int i=0; i<(get_rows(*m)); i++ ){ 
           for(int j=0; j<(get_cols(*m)); j++ ){
             if(i==j)
-              *m->matriz[i][j]=1;
+              *m->matriz[i][j]=V_ONE;
             else
-              *m->matriz[i][j]=0;  
+              *m->matriz[i][j]=V_NULL;  
           }
     }
     return -E_OK;
@@ -521,7 +522,7 @@ error_t clear_matrix(matrix_t *m)
   if (m!=NULL){
   for(int i=0; i<(get_rows(m)); i++ ){ 
     for(int j=0; j<(get_cols(m)); j++ ){
-      m->matriz[i][j]=0;
+      m->matriz[i][j]=V_NULL;
     }
   }
      return -E_OK;
