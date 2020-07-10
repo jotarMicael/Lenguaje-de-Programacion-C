@@ -79,6 +79,16 @@ main(int argc, char *argv)
                     if(error!=0)
                         return error; //Hubo error en escritura de matriz
                 }
+                if(argv[6]=="cmp")&&(argv[7]!=NULL){
+                    error=output_error(errors,cmp(m1,m2));
+                    if(error!=0)
+                        return error; //Hubo error en la comparacion
+                    error=output_error(errors,write_matrix((argv[7],fp2,m2)); //cargo m2 en el archivo
+                    if(error!=0)
+                        return error; //Hubo error en escritura de matriz
+                }
+
+                return output_error(errors,7);
 
             }
             else
