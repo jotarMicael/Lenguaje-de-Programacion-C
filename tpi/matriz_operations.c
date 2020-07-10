@@ -3,6 +3,17 @@
 #include "matriz.h"
 #include "list_t.h"
 
+
+
+error_t set_ffmt_matrix(matrix_t *m,matrix_fmt_t  fmt)
+{
+  if(m!=NULL){
+    m->fmt=fmt;
+    return -E_OK;
+  }
+  return -E_NOTIMPL_ERROR;      
+}
+
 matrix_t *matrix_create(int n, int m, matrix_fmt_t c)
 {
     int i;
@@ -18,13 +29,12 @@ matrix_t *matrix_create(int n, int m, matrix_fmt_t c)
     M->cols = n; //columnas
 
     if (c==M1)
-      M->fmt = M1;
+      set_ffmt_matrix(m,M1);
     else
-      M->fmt = M2;
+      set_ffmt_matrix(m,M2);
 
     M->matriz = malloc(n * sizeof(float *));
     if(M->matriz== NULL)
-    {
         return NULL;
 
     for(i = 0; i < n; i++)
@@ -37,18 +47,26 @@ matrix_t *matrix_create(int n, int m, matrix_fmt_t c)
     }
     
     return M;
+
 }
 
-error_t set_ffmt_matrix(matrix_t *m,matrix_fmt_t  fmt)
+unsigned int get_rows(const matrix_t *ma)
 {
-  if(m!=NULL){
-    m->fmt=fmt;
-    return -E_OK;
-  }
-  return -E_NOTIMPL_ERROR;      
+  if (ma!=NULL)
+    return ma->rows;
+  else
+     return NULL;
 }
 
-error_t get_ffmt_matrix(matrix_t *m, matrix_fmt_t  *fmt)
+unsigned int get_cols(const matrix_t *ma)
+{
+  if (ma!=NULL)
+    return ma->cols;
+  else
+     return NULL;
+}
+
+/*error_t get_ffmt_matrix(matrix_t *m, matrix_fmt_t  *fmt)
 {
   if(m!=NULL){
     fmt=malloc(n * sizeof(matrix_fmt_t *));
@@ -56,7 +74,7 @@ error_t get_ffmt_matrix(matrix_t *m, matrix_fmt_t  *fmt)
     return -E_OK;
   }
   return -E_NOTIMPL_ERROR;      
-}
+} */
 
 error_t read_matrix(char *filename,FILE *fp, matrix_t *m){
 
@@ -114,7 +132,7 @@ if(m==NULL){
 }
 
  //read matrix size information
- if (fscanf(fp, "%d %d", m->rows, m->cols) != 2) {
+ if (fscanf(fp, "%d %d", get_rows(m), get_cols(m)) != 2) {
    fprintf(stderr, "Error en dimensiones \n");
    return -E_SIZE_ERROR
  }
@@ -122,13 +140,13 @@ if(m==NULL){
 
     if(m->fmt==M1){ //proceso M1
   
-        for(ni = 0; ni < m->rows; ni++){
+        for(ni = 0; ni < get_rows(m); ni++){
 
           fgets(buf, 100000, fp); 
           i = 0;
           mj = 0;
 
-          while(mj < m->cols) {
+          while(mj < get_cols(m)) {
             j = 0;
 
             while(buf[i] != ' ' && buf[i] != '\n') {
@@ -147,8 +165,8 @@ if(m==NULL){
  }
  else{ //proceso M2
       while (fread((double*)&dvalue, sizeof(double), 1, fp) == sizeof(double)){
-        for(int i=0; i<(m->rows); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
-          for(int j=0; i<(m->cols); j++ ){
+        for(int i=0; i<(get_rows(m)); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
+          for(int j=0; i<(get_cols(m)); j++ ){
             m.matriz[i][j]=dvalue;
             fread((double*)&dvalue, sizeof(double), 1, fp);
         }
@@ -216,15 +234,15 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
         fclose(fp); 
         return -E_SIZE_ERROR;
       }
-      fprintf(fp, "%d",m->rows);
+      fprintf(fp, "%d",get_rows(m));
       fprintf(fp, "%c",' ');
-      fprintf(fp, "%d\n",m->cols); //escribo filas y columnas en archivo
+      fprintf(fp, "%d\n",get_cols(m)); //escribo filas y columnas en archivo
 
       
 
       if(m->fmt=='M1'){ //proceso M1
-          for(int i=0; i<(m->rows); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
-                for(int j=0; i<(m->cols); j++ ){
+          for(int i=0; i<get_rows(m)); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
+                for(int j=0; i<(get_cols(m)); j++ ){
                   if(printf(fp,"%d",m->matriz[i][j])!=1){
                     fclose(fp); 
                     return -E_WRITE_ERROR;
@@ -237,8 +255,8 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
 
       else{
           if(m->fmt=='M2'){ //proceso M2
-              for(int i=0; i<(m->rows); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
-                for(int j=0; i<(m->cols); j++ ){
+              for(int i=0; i<(get_rows(m)); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
+                for(int j=0; i<(get_cols(m)); j++ ){
                   res=fwrite(&m->matriz[i][j], sizeof(int), 1, fp);
                   if(res==NULL){
                     fclose(fp); 
@@ -262,7 +280,7 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
 
 error_t dup_matrix(const matrix_t *m_src, matrix_t **m_dst)
 {
-  *m_dst=matrix_create(m_src->rows,m_src->cols,m_src->fmt);
+  *m_dst=matrix_create(get_rows(m_src),get_cols(m_src),m_src->fmt);
   if((*m_dst!=NULL)&&(m_src!=NULL){
      m_dst=&m_src;
      return -E_OK;
@@ -274,11 +292,11 @@ error_t dup_matrix(const matrix_t *m_src, matrix_t **m_dst)
 error_t sum(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
 {
   int i,j;
-  if(ma->rows==mb->rows){
-    if(ma->cols==mb->cols){
-        *mc=matrix_create(ma->rows,ma->cols,ma->fmt);
-        for(int i=0; i<(ma->rows); i++ ){ 
-          for(int j=0; j<(ma->cols); j++ ){
+  if(get_rows(ma)==get_rows(mb)){
+    if(get_cols(ma)==get_cols(mb)){
+        *mc=matrix_create(get_rows(ma),get_cols(ma),ma->fmt);
+        for(int i=0; i<(get_rows(ma)); i++ ){ 
+          for(int j=0; j<(get_cols(ma)); j++ ){
             *mc->matriz[i][j]=(ma->matriz[i][j])+(mb->matriz[i][j]);
           }
         }
@@ -296,10 +314,10 @@ error_t sum_inplace(const matrix_t *m_src, matrix_t *m_dst)
 {
   int i,j;
   if((m_src!=NULL)&&(m_dst!=NULL)){
-  if(m_src->rows==m_dst->rows){
-    if(m_src->cols==m_dst->cols){
-        for(int i=0; i<(m_src->rows); i++ ){ 
-          for(int j=0; j<(m_src->cols); j++ ){
+  if(get_rows(m_src)==get_rows(m_dst)){
+    if(get_cols(m_src)==get_cols(m_dst)){
+        for(int i=0; i<(get_rows(m_src)); i++ ){ 
+          for(int j=0; j<get_cols(m_src)); j++ ){
             m_dst->matriz[i][j]=(m_src->matriz[i][j])+(m_dst->matriz[i][j]);
           }
         }
@@ -319,9 +337,9 @@ error_t mult_scalar(T_TYPE a, const matrix_t *mb, matrix_t **mc)
 {
   int i,j;
     if(mb!=NULL){
-        *mc=matrix_create(mb->rows,mb->cols,mb->fmt);
-        for(int i=0; i<(mb->rows); i++ ){ 
-          for(int j=0; j<(mb->cols); j++ ){
+        *mc=matrix_create(get_rows(mb),get_cols(mb),mb->fmt);
+        for(int i=0; i<(get_rows(mb)); i++ ){ 
+          for(int j=0; j<(get_cols(mb)); j++ ){
             *mc->matriz[i][j]=(mb->matriz[i][j])+a;
           }
         }
@@ -336,8 +354,8 @@ error_t mult_scalar_inplace(T_TYPE a, matrix_t *m_dst)
 {
   int i,j;
   if (m_dst!=NULL){
-  for(int i=0; i<(m_dst->rows); i++ ){ 
-    for(int j=0; j<(m_dst->cols); j++ ){
+  for(int i=0; i<(get_rows(m_dst)); i++ ){ 
+    for(int j=0; j<(get_cols(m_dst)); j++ ){
       m_dst->matriz[i][j]=(m_dst->matriz[i][j])+a);
     }
   }
@@ -353,8 +371,8 @@ error_t create_and_fill_matrix(unsigned int rows, unsigned int cols, T_TYPE a, m
   int i,j;
   *mb=matrix_create(rows,cols,*mb->fmt);
   if(*mb!=NULL){
-    for(int i=0; i<(*mb->rows);i++){ 
-          for(int j=0; j<(*mb->cols);j++){
+    for(int i=0; i<(get_rows(*mb));i++){ 
+          for(int j=0; j<(get_cols(*mb));j++){
             *mb->matriz[i][j]=a;
           }
     }
@@ -365,21 +383,6 @@ error_t create_and_fill_matrix(unsigned int rows, unsigned int cols, T_TYPE a, m
 
 }
 
-unsigned int get_rows(const matrix_t *ma)
-{
-  if (ma!=NULL)
-    return ma->rows;
-  else
-    return 0;
-}
-
-unsigned int get_cols(const matrix_t *ma)
-{
-  if (ma!=NULL)
-    return ma->cols;
-  else
-    return 0;
-}
 
 error_t null_matrix(unsigned int n, matrix_t **mc)
 {
@@ -393,8 +396,8 @@ error_t idty_matrix(unsigned int n, matrix_t **m)
   int i,j;
   *m=matrix_create(n,n,*m->fmt);
   if(*m!=NULL){
-    for(int i=0; i<(*m->matriz); i++ ){ 
-          for(int j=0; j<(*m->cols); j++ ){
+    for(int i=0; i<(get_rows(*m)); i++ ){ 
+          for(int j=0; j<(get_cols(*m)); j++ ){
             if(i==j)
               *m->matriz[i][j]=1;
             else
@@ -424,7 +427,7 @@ error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
         return -E_SIZE_ERROR;
     }
 
-    *mc=matrix_create(ma->cols,mb->rows,ma->fmt);
+    *mc=matrix_create(get_cols(ma),get_rows(mb),ma->fmt);
     if(*mc == NULL)
     {
         return -E_ALLOC_ERROR;
@@ -433,12 +436,12 @@ error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
     *mc->cols=ma->cols;
     *mc->rows=mb->rows;
 
-    for(n = 0; n < *mc->rows; n++)
+    for(n = 0; n < get_rows(*mc); n++)
     {
-        for(m = 0; m < *mc->cols; m++)
+        for(m = 0; m < get_cols(*mc); m++)
         {
             fsum = 0;
-            for(i=0; i<*mc->cols; i++)
+            for(i=0; i<get_cols(*mc); i++)
             {
                 fsum = fsum + (ma->cols[n][i]) * (mb->cols[i][m]);
             }
@@ -452,7 +455,7 @@ error_t mult(const matrix_t *ma, const matrix_t *mb, matrix_t **mc)
 error_t set_elem_matrix(unsigned int row, unsigned int col, T_TYPE value, matrix_t **m)
 {
   if (*m!=NULL){
-      if(row<=*m->rows)&&(col<=*m->cols){
+      if(row<=get_rows(*m))&&(col<=get_cols(*m)){
         *m->matriz[row][col]=value;
         return -E_OK;
       }
@@ -465,7 +468,7 @@ error_t set_elem_matrix(unsigned int row, unsigned int col, T_TYPE value, matrix
 error_t get_elem_matrix(unsigned int row, unsigned int col, T_TYPE *value, const matrix_t *m)
 {
   if (m!=NULL){
-      if(row<=m->rows)&&(col<=m->cols){
+      if(row<=get_rows(m))&&(col<=get_cols(m)){
         value=m->matriz[row][col];
         return -E_OK;
       }
@@ -478,7 +481,7 @@ error_t get_elem_matrix(unsigned int row, unsigned int col, T_TYPE *value, const
 
 int cmp_matrix(const matrix_t *ma, const matrix_t *mb){
   int complete_me= 1;
-  if ( (mb->rows != ma->rows) || (mb->cols != ma->cols) ){
+  if ( (get_rows(mb) != get_rows(ma)) || (get_cols(mb) != get_cols(mb)) ){
       return -E_SIZE_ERROR;
   }
 
@@ -486,8 +489,8 @@ int cmp_matrix(const matrix_t *ma, const matrix_t *mb){
      // for(int i=0;i<(mb->matriz)*(mb->cols);i++){
 	  //if ( mb->contents[i] !=  ma->contents[i])
 	  //if ((mb->contents[i] - ma->contents[i]) >=  V_DELTA_PRECS)
-    for (int i = 0; i < ma->rows; x++) {
-      for (int j = 0; j < ma->cols; y++) {
+    for (int i = 0; i < get_rows(ma); x++) {
+      for (int j = 0; j <get_cols(ma); y++) {
         if (ma->matriz[i][j] != mb->matriz[i][j]){
           return -E_SIZE_ERROR;
         } //retorna 0 si son diferentes
@@ -503,9 +506,9 @@ error_t free_matrix(matrix_t **m)
 {
   if(m!=NULL){
   int i;
-    for(i = 0; i < *m->rows; i++)
-        FREE(*m->cols[i]);
-    FREE(*m->cols);
+    for(i = 0; i < get_rows(*m); i++)
+        FREE(*m->matriz[i]);
+    FREE(*m->matriz);
     FREE(*m);
     return -E_OK;
   }
@@ -516,8 +519,8 @@ error_t clear_matrix(matrix_t *m)
 {
   int i,j;
   if (m!=NULL){
-  for(int i=0; i<(m->rows); i++ ){ 
-    for(int j=0; j<(m->cols); j++ ){
+  for(int i=0; i<(get_rows(m)); i++ ){ 
+    for(int j=0; j<(get_cols(m)); j++ ){
       m->matriz[i][j]=0;
     }
   }
@@ -533,10 +536,10 @@ error_t get_row(unsigned int pos, const matrix_t *ma, list_t *l)
 {
   int j;
   list_t aux;
-  if((pos<ma.rows)&&(pos>=0)){
+  if((pos<get_rows(ma))&&(pos>=0)){
     if(ma!=NULL)&&(l!=NULL){
     list_new(aux);
-    for(int j=0; j<(ma->cols); j++ ){
+    for(int j=0; j<(get_rows(ma)); j++ ){
       l=list_append(aux,ma->matriz[pos][j]);
     }
     destroy_list(aux);
@@ -557,7 +560,7 @@ error_t get_col(unsigned int pos, const matrix_t *ma, list_t *l)
   if((pos<ma->cols)&&(pos>=0)){
     if(ma!=NULL)&&(l!=NULL){
     list_new(aux);
-    for(int i=0; i<(ma->rows); j++ ){
+    for(int i=0; i<(get_rows(ma)); j++ ){
       l=list_append(aux,ma->matriz[i][pos]);
     }
     destroy_list(aux);
@@ -575,8 +578,8 @@ error_t matrix2list(const matrix_t *ma, list_t *l)
     list_t aux;
     if (ma!=NULL)&&(l!=NULL){ 
       list_new(aux);
-      for(int i=0; i<(ma->rows); i++ ){ 
-        for(int j=0; j<(ma->cols); j++ ){
+      for(int i=0; i<(get_rows(ma)); i++ ){ 
+        for(int j=0; j<(get_cols(ma)); j++ ){
           l=list_append(aux,ma->matriz[i][j]);
         }
       }
