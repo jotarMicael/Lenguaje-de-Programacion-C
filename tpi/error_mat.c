@@ -21,7 +21,7 @@ int output_error(FILE *fp, error_t e)
     return fprintf(fp, "No implementado aun (NOTIMPL)");
   case -E_FILE_ERROR:
     return fprintf(fp, "Error de archivo (FILE)");
-  case -E_INVALID_ERROR;
+  case -E_INVALID_ERROR:
     return fprintf(fp, "Error de parametro (PARAMETER)");   
   default:
     return fprintf(fp, "Error desconocido (UNKNOWN)");

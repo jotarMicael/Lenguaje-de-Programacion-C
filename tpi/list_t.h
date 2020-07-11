@@ -11,7 +11,6 @@ struct nodo {
 typedef struct nodo nodo_t;
 typedef nodo_t *list_t;
 
-
 void list_new(list_t *l);
 
 list_t lista_append(list_t l, int dato);
