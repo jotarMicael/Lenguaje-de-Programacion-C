@@ -10,7 +10,7 @@ void list_new(list_t *l){
 }
 
 
-list_t *lista_append(list_t *l, int dato){
+list_t lista_append(list_t *l, int dato){
 
 	nodo_t *nuevoNodo, *aux,*ant;
 	nuevoNodo=malloc(sizeof(nodo_t));
@@ -49,7 +49,7 @@ bool is_Void(list_t *l){
 
 }
 
-list_t *remove_List(list_t *l, int dato){
+list_t remove_List(list_t *l, int dato){
 
 	list_t *aux,*ante;
 
