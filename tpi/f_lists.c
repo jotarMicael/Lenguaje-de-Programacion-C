@@ -3,14 +3,14 @@
 #include <stdlib.h>
 #include "list_t.h"
 
-void list_new(list_t *l){
+void list_new(list_t l){
 
 	l=NULL;
 
 }
 
 
-list_t lista_append(list_t l, int dato){
+list_t list_append(list_t l, int dato){
 
 	nodo_t *nuevoNodo, *aux,*ant;
 	nuevoNodo=malloc(sizeof(nodo_t));
@@ -34,7 +34,7 @@ list_t lista_append(list_t l, int dato){
 
 }
 
-void destroy_list(list_t *l){
+void destroy_list(list_t l){
 
 	free(l);
 	l==NULL;
@@ -51,7 +51,7 @@ bool is_Void(list_t l){
 
 list_t remove_List(list_t l, int dato){
 
-	list_t *aux,*ante;
+	list_t aux,ante;
 
 	if((l!=NULL) && (l->dato==dato)){
 
@@ -81,7 +81,7 @@ list_t remove_List(list_t l, int dato){
 
 bool exist(list_t l, int dato){
 
-list_t *aux;
+list_t aux;
 
 aux=l;
 

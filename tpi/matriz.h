@@ -2,7 +2,7 @@
 #define MATRIX_MAT_H  1
 
 #include <stdio.h>
-#include <list.h>
+#include "list_t.h"
 #include "error_mat.h"
 
 #define N_BUF_LENGTH   2048
@@ -24,16 +24,16 @@ typedef struct matrix {
             double **matriz;
          }  matrix_t;
 
-error_t matrix_create(int n, int m, matrix_t *m);
+matrix_t *matrix_create(int n, int m, matrix_fmt_t c);
 /***
  * Carga la matriz desde un archivo. El resultado queda en "m".
  */
-error_t read_matrix(FILE *fp, matrix_t *m);
+error_t read_matrix(char *filename,FILE *fp, matrix_t *m);
 
 /***
  * Almacena la matriz en un archivo. El origen es "m".
  */
-error_t write_matrix(FILE *fp, const matrix_t *m);
+error_t write_matrix(char *filename,FILE *fp, const matrix_t *m);
 
 /***
  * Setea el formato de la matriz, (M1, M2, ...).

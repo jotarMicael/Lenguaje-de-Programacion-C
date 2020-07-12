@@ -31,7 +31,7 @@ void help(){
 
 
 int
-main(int argc, char *argv)
+main(int argc, char *argv[])
 {
    // int n1, n2, m1, m2, print;
     //char *f1, *f2;
@@ -60,7 +60,7 @@ main(int argc, char *argv)
             error=output_error(errors,null_matrix(m1->rows,m3));
             if(error!=0)
                 return error; //Hubo error en null
-            error=output_error(errors,write_matrix((argv[6],fp2,m3))); //cargo m3 en el archivo
+            error=output_error(errors,write_matrix(argv[6],fp2,m2)); //cargo m3 en el archivo
             return error; //salgo del programa bien, o mal
         }
         if ((argv[3] == "--in2|-2")&&(argv[4]!=NULL)){
@@ -72,7 +72,7 @@ main(int argc, char *argv)
                     error=output_error(errors,sum(m1,m2,m3));
                     if(error!=0)
                         return error; //Hubo error en la suma
-                    error=output_error(errors,write_matrix(argv[7],fp2,m3)); //cargo m3 en el archivo
+                    error=output_error(errors,write_matrix(argv[7],fp2,(*m3))); //cargo m3 en el archivo
                     if(error!=0)
                         return error; //Hubo error en escritura de matriz
                 }
@@ -80,12 +80,12 @@ main(int argc, char *argv)
                     error=output_error(errors,mult(m1,m2,m3));
                     if(error!=0)
                         return error; //Hubo error en la multiplicacion
-                    error=output_error(errors,write_matrix(argv[7],fp2,m3)); //cargo m3 en el archivo
+                    error=output_error(errors,write_matrix(argv[7],fp2,(*m3))); //cargo m3 en el archivo
                     if(error!=0)
                         return error; //Hubo error en escritura de matriz
                 }
                 if((argv[6]=="cmp")&&(argv[7]!=NULL)){
-                    error=output_error(errors,cmp(m1,m2));
+                    error=output_error(errors,cmp_matrix(m1,m2));
                     if(error!=0)
                         return error; //Hubo error en la comparacion
                     error=output_error(errors,write_matrix(argv[7],fp2,m2)); //cargo m2 en el archivo
@@ -112,7 +112,7 @@ main(int argc, char *argv)
             }
              if (argv[3] == "idty"){
                  if((argv[4]=="--out|-o")&&(argv[5]!=NULL)){
-                    if(m1.rows>=m1.cols)
+                    if(m1->rows>=m1->cols)
                         error=output_error(errors,idty_matrix(m1->rows,&m2)); //genero matriz identidad en m2 con rows
                     else
                         error=output_error(errors,idty_matrix(m1->cols,&m2)); //genero matriz identidad en m2 con cols
@@ -124,14 +124,15 @@ main(int argc, char *argv)
 
              }
              if (argv[3] == "mult_scalar"){
-                if((argv[4]=="--scalar|-s")&&(argv[5]!=NULL)&&(argv[6]=="--out|-o")&&(argv[7]!=NULL)){
-                    error=output_error(errors,mult_scalar(argv[5],m1,m3)); //genero mult_scalar en m3
+                if((argv[4]=="--scalar|-s")&&(argv[5]!=NULL)&&(argv[6]=="--out|-o")&&(argv[7]!=NULL)){ 
+                    int ia = *(argv[5]) - '0';
+                    error=output_error(errors,mult_scalar(ia,m1,m3)); //genero mult_scalar en m3
                     if(error==0) //si no hay error
                         error=output_error(errors,write_matrix(argv[7],fp2,*m3)); //escribo en el archivo la matriz escalar
                 }
 
             }
-            matrix_free(m1);matrix_free(m2);matrix_free(*m3);
+            free_matrix(&m1);free_matrix(&m2);free_matrix(m3);
             return error; //retorna cualquier otro error, o si salio bien.
         }
     }
