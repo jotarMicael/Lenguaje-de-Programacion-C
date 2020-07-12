@@ -171,7 +171,7 @@ if(m==NULL){
  else{ //proceso M2
       while (fread((T_TYPE*)&dvalue, sizeof(T_TYPE), 1, fp) == sizeof(T_TYPE)){
         for(int i=0; i<(get_rows(m)); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
-          for(int j=0; i<(get_cols(m)); j++ ){
+          for(int j=0; j<(get_cols(m)); j++ ){
             m->matriz[i][j]=dvalue;
             fread((T_TYPE*)&dvalue, sizeof(T_TYPE), 1, fp);
         }
@@ -220,7 +220,7 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
 
       if(m->fmt==1){ //proceso M1
           for(int i=0; i<get_rows(m); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
-                for(int j=0; i<(get_cols(m)); j++ ){
+                for(int j=0; j<(get_cols(m)); j++ ){
                   if(fprintf(fp,"%f",m->matriz[i][j])!=1){
                     fclose(fp); 
                     return -E_WRITE_ERROR;
@@ -234,7 +234,7 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
       else{
           if(m->fmt==2){ //proceso M2
               for(int i=0; i<(get_rows(m)); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
-                for(int j=0; i<(get_cols(m)); j++ ){
+                for(int j=0; j<(get_cols(m)); j++ ){
                   int res=fwrite(&m->matriz[i][j], sizeof(int), 1, fp);
                   if(res==NULL){
                     fclose(fp); 
@@ -261,6 +261,11 @@ error_t dup_matrix(const matrix_t *m_src, matrix_t **m_dst)
   matrix_t **mb;
   *mb=matrix_create(get_rows(m_src),get_cols(m_src),m_src->fmt);
   if((*mb!=NULL)&&(m_src!=NULL)){
+     for(int i=0; i<(get_rows(m_src)); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
+        for(int j=0; j<(get_cols(m_src)); j++ ){
+           (*mb)->matriz[i][j]=m_src->matriz[i][j];
+        }
+      }
      m_dst=mb;
      return -E_OK;
   }
