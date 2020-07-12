@@ -90,7 +90,7 @@ aux=l;
 		aux=aux->siguiente;
 	}
 
-	if((aux!=NULL))
+	if(aux!=NULL)
 		return true;
 	else
 		return false;
