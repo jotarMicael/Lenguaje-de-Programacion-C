@@ -7,28 +7,27 @@
 void
 formato()
 {
-    printf("Â¿Necesita ayuda?\n");
+    printf("¿Necesita ayuda?\n");
     printf("Ingrese '--help' para obtener ayuda sobre los comandos disponibles a ingresar:\n");
 
-};
+}
 
 void help(){
 
-    printf("--in1|-1 â€‹nombre_archivo - Indica la primera matriz a cargar en memoria. (Obligatorio)\n");
-    printf("--in2|-2 â€‹nombre_archivo - Indica la segunda matriz a cargar enmemoria.(Obligatorio,excepto que se useâ€‹ dupâ€‹,idtyâ€‹ o â€‹mult_scalar)\n");
-    printf("--out|-o â€‹nombre_archivo - Nombre del archivo donde se guardarÃ¡ el resultado\n");
-    printf("--scalar|-s â€‹nÃºmero - NÃºmero en punto flotante por el que se multiplicarÃ¡n los elementos de la matriz cargada con â€‹--in1â€‹. (Obligatorio si se usa â€‹mult_scalarâ€‹).\n");
-    printf("--op|-p â€‹(dup|sum|mult_scalar|mult|idty|null|cmp) Indica la operaciÃ³n a realizar, que puede ser una de las siguientes:\n");
-    printf("dupâ€‹: Genera un duplicado de la matriz indicada conâ€‹ --in1â€‹ ,en el archivo indicado con â€‹--outâ€‹.\n");
-    printf("sum: Suma elemento a elemento las matrices indicadas con --in1 y --in2, almacenando el resultado en el archivo indicado con --out. Si las matrices no tienen el mismo tamaÃ±o, el programa debe retornar el error: ERROR_INCOMPATIBLE_MATRICES.\n");
-    printf("mult_scalar: Multiplica cada elemento de la matriz indicada con --in1 por el nÃºmero indicado con --scalar. El resultado queda en el valor del parÃ¡metro--out.\n");
-    printf("mult: Multiplicar la matriz indicada con --in1 por la indicada con --in2, guardando el resultado en --out. Si las matrices no son multiplicables por su tamaÃ±o el programa debe retornar el error: ERROR_INCOMPATIBLE_MATRICES\n");
-    printf("idty: genera la matriz identidad compatible con las dimensiones de la matriz indicada con el parÃ¡metro --in1. Resultado en el parÃ¡metro --out. La matriz identidad es una matriz cuadrada de NxN donde solo en su diagonal tiene valores â€œ1â€� y el resto es â€œ0â€�. Por ejemplo si la matriz de entrada es de 2x3 la identidad serÃ¡ de 3x3 dando como resultado el producto una matriz de 2x3 idÃ©ntica a la de entrada.\n");
-    printf("null: genera la matriz nula compatible con las dimensiones de la matriz indicada con el parÃ¡metro --in1. Resultado en el parÃ¡metro de --out. La matriz cuadrada serÃ¡ de NxN y todos sus valores serÃ¡n nulos (â€œ0â€�).\n");
-    printf("cmp: compara la matriz indicada con --in1 con la indicada en --in2. Almacena el resultado de la operaciÃ³n en una matriz de 1*1 indicado en el parÃ¡metro --out.\n");
-    printf("--help Imprime la ayuda que indica cÃ³mo utilizar el programa en salida estÃ¡ndar y termina.\n");
+    printf("--in1|-1 ?nombre_archivo - Indica la primera matriz a cargar en memoria. (Obligatorio)\n");
+    printf("--in2|-2 ?nombre_archivo - Indica la segunda matriz a cargar enmemoria.(Obligatorio,excepto que se use? dup?,idty? o ?mult_scalar)\n");
+    printf("--out|-o ?nombre_archivo - Nombre del archivo donde se guardará el resultado\n");
+    printf("--scalar|-s ?número - Número en punto flotante por el que se multiplicarán los elementos de la matriz cargada con ?--in1?. (Obligatorio si se usa ?mult_scalar?).\n");
+    printf("--op|-p ?(dup|sum|mult_scalar|mult|idty|null|cmp) Indica la operación a realizar, que puede ser una de las siguientes:\n");
+    printf("dup?: Genera un duplicado de la matriz indicada con? --in1? ,en el archivo indicado con ?--out?.\n");
+    printf("sum: Suma elemento a elemento las matrices indicadas con --in1 y --in2, almacenando el resultado en el archivo indicado con --out. Si las matrices no tienen el mismo tamaño, el programa debe retornar el error: ERROR_INCOMPATIBLE_MATRICES.\n");
+    printf("mult_scalar: Multiplica cada elemento de la matriz indicada con --in1 por el número indicado con --scalar. El resultado queda en el valor del parámetro--out.\n");
+    printf("mult: Multiplicar la matriz indicada con --in1 por la indicada con --in2, guardando el resultado en --out. Si las matrices no son multiplicables por su tamaño el programa debe retornar el error: ERROR_INCOMPATIBLE_MATRICES\n");
+    printf("idty: genera la matriz identidad compatible con las dimensiones de la matriz indicada con el parámetro --in1. Resultado en el parámetro --out. La matriz identidad es una matriz cuadrada de NxN donde solo en su diagonal tiene valores 1 y el resto es 0. Por ejemplo si la matriz de entrada es de 2x3 la identidad será de 3x3 dando como resultado el producto una matriz de 2x3 idéntica a la de entrada.\n");
+    printf("null: genera la matriz nula compatible con las dimensiones de la matriz indicada con el parámetro --in1. Resultado en el parámetro de --out. La matriz cuadrada será de NxN y todos sus valores serán nulos (0).\n");
+    printf("cmp: compara la matriz indicada con --in1 con la indicada en --in2. Almacena el resultado de la operación en una matriz de 1*1 indicado en el parámetro --out.\n");
+    printf("--help Imprime la ayuda que indica cómo utilizar el programa en salida estándar y termina.\n");
 }
-
 
 int
 main(int argc, char *argv[])
@@ -47,7 +46,7 @@ main(int argc, char *argv[])
         return 0;
     }
 
-    if(argv[1] == "--help"){
+    if(*(argv[1]) == "--help"){
         help();
         return -E_OK;
     }

@@ -37,7 +37,7 @@ list_t list_append(list_t l, int dato){
 void destroy_list(list_t l){
 
 	free(l);
-	l==NULL;
+	l=NULL;
 }
 
 bool is_Void(list_t l){
