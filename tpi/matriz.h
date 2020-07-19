@@ -10,30 +10,35 @@
 
 
 #define T_TYPE         double
-//#define S_TYPE_FMT     "%lf"
-//#define S_TYPE_FMT2    "%8.4lf "
 #define V_NULL         0.0
 #define V_ONE          1.0
-//#define V_DELTA_PRECS  0.00001
+#define INIT_C_R	   -5
 
 typedef enum matrix_fmt {M1 = 1 , M2 , INVALID} matrix_fmt_t;
 
 typedef struct matrix {
             matrix_fmt_t  fmt;
             unsigned int rows,cols;
-            double **matriz;
+            T_TYPE **matriz;
          }  matrix_t;
 
 matrix_t *matrix_create(int n, int m, matrix_fmt_t c);
 /***
  * Carga la matriz desde un archivo. El resultado queda en "m".
  */
-error_t read_matrix(char *filename,FILE *fp, matrix_t *m);
+
+error_t read_matrix(char *filename,FILE *fp, matrix_t **m);
 
 /***
  * Almacena la matriz en un archivo. El origen es "m".
  */
 error_t write_matrix(char *filename,FILE *fp, const matrix_t *m);
+
+/***
+ * Imprime la matriz recibida como parametro
+ */
+
+void matrix_print(matrix_t *M);
 
 /***
  * Setea el formato de la matriz, (M1, M2, ...).
@@ -65,7 +70,7 @@ error_t sum(const matrix_t *ma, const matrix_t *mb, matrix_t **mc);
  * Debe chequear que las dimensiones sean compatibles para
  * la operacion. Sino retornar un error que indique el mismo.
  */
-error_t sum_inplace(const matrix_t *m_src, matrix_t *m_dst);
+error_t sum_inplace(const matrix_t *m_src, matrix_t **m_dst);
 
 /***
  * Realiza la multiplicacion algebraica de una matriz por
@@ -76,7 +81,7 @@ error_t sum_inplace(const matrix_t *m_src, matrix_t *m_dst);
 error_t mult_scalar(T_TYPE a, const matrix_t *mb, matrix_t **mc);
 
 
-error_t mult_scalar_inplace(T_TYPE a, matrix_t *m_dst);
+error_t mult_scalar_inplace(T_TYPE a, matrix_t **m_dst);
 
 /***
  * Realiza la multiplicacion algebraica entre matrices.
@@ -96,7 +101,7 @@ error_t create_and_fill_matrix(unsigned int rows, unsigned int cols, T_TYPE a, m
  * Genera la matriz nula de "n*n" en "mc".
  * El resultado queda en "mc".
  */
-error_t null_matrix(unsigned int n, matrix_t **mc);
+error_t null_matrix(unsigned int rows,unsigned int cols, matrix_t **mc);
 
 /***
  * Genera la matriz identidad de "n*n" en "mc".
@@ -131,7 +136,7 @@ error_t get_elem_matrix(unsigned int row, unsigned int col, T_TYPE *value, const
  * Compara las matrices "ma" y "mb". Si son iguales retorna
  * distinto de cero o true y sino cero o false
  */
-int cmp_matrix(const matrix_t *ma, const matrix_t *mb);
+error_t cmp_matrix(const matrix_t *ma, const matrix_t *mb);
 
 /***
  * Libera la memoria usada por la matriz "m".

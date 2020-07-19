@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "matriz.h"
 #include "list_t.h"
 #include "error_mat.h"
@@ -14,11 +15,11 @@ formato()
 
 void help(){
 
-    printf("--in1|-1 ?nombre_archivo - Indica la primera matriz a cargar en memoria. (Obligatorio)\n");
-    printf("--in2|-2 ?nombre_archivo - Indica la segunda matriz a cargar enmemoria.(Obligatorio,excepto que se use? dup?,idty? o ?mult_scalar)\n");
-    printf("--out|-o ?nombre_archivo - Nombre del archivo donde se guardará el resultado\n");
-    printf("--scalar|-s ?número - Número en punto flotante por el que se multiplicarán los elementos de la matriz cargada con ?--in1?. (Obligatorio si se usa ?mult_scalar?).\n");
-    printf("--op|-p ?(dup|sum|mult_scalar|mult|idty|null|cmp) Indica la operación a realizar, que puede ser una de las siguientes:\n");
+    printf("--in1|-1 nombre_archivo - Indica la primera matriz a cargar en memoria. (Obligatorio)\n");
+    printf("--in2|-2 nombre_archivo - Indica la segunda matriz a cargar enmemoria.(Obligatorio,excepto que se use? dup?,idty? o ?mult_scalar)\n");
+    printf("--out|-o nombre_archivo - Nombre del archivo donde se guardará el resultado\n");
+    printf("--scalar|-s número - Número en punto flotante por el que se multiplicarán los elementos de la matriz cargada con ?--in1?. (Obligatorio si se usa ?mult_scalar?).\n");
+    printf("--op|-p (dup|sum|mult_scalar|mult|idty|null|cmp) Indica la operación a realizar, que puede ser una de las siguientes:\n");
     printf("dup?: Genera un duplicado de la matriz indicada con? --in1? ,en el archivo indicado con ?--out?.\n");
     printf("sum: Suma elemento a elemento las matrices indicadas con --in1 y --in2, almacenando el resultado en el archivo indicado con --out. Si las matrices no tienen el mismo tamaño, el programa debe retornar el error: ERROR_INCOMPATIBLE_MATRICES.\n");
     printf("mult_scalar: Multiplica cada elemento de la matriz indicada con --in1 por el número indicado con --scalar. El resultado queda en el valor del parámetro--out.\n");
@@ -32,42 +33,50 @@ void help(){
 int
 main(int argc, char *argv[])
 {
-   // int n1, n2, m1, m2, print;
-    //char *f1, *f2;
-    matrix_t *m1,*m2;
-    matrix_t **m3;
+
+    matrix_t *m1=NULL,*m2=NULL; 
+    matrix_t **m3=NULL;
     int error;
-    FILE *fp,*fp2,*errors;
+    FILE *fp=NULL,*fp2=NULL,*errors=NULL;
 
     // Revisamos si hay suficientes entradas desde terminal
     if (argc >7)
     {
         formato();
-        return 0;
+        error=output_error(errors,0);
+        return error;
     }
 
-    if(*(argv[1]) == "--help"){
+    if(strcmp(argv[1], "--help") == 0){ 
         help();
-        return -E_OK;
+        error=output_error(errors,0);
+        return error;
     }
 
-    if ((argv[1] == "--in1|-1")&&(argv[2]!=NULL)){
-        error=output_error(errors,read_matrix(argv[2],fp,m1));
-        if(error!=0)
+    if ((strcmp(argv[1], "--1") == 0)&&(argv[2]!=NULL)){
+        error=output_error(errors,read_matrix(argv[2],fp,&m1));
+        if(error != 0)
             return error;//Hubo error en carga de 1era matriz
-        if ((argv[3] == "--op|-p")&&(argv[4]!="null")&&(argv[5]!="--out|-o")&&(argv[6]!=NULL)){
+        if(m1==NULL)
+           fprintf(stderr, "hola \n"); 
+        matrix_print(m1);
+        fprintf(stderr, "FORMAT ES: %d\n",m1->fmt);
+        fprintf(stderr, "Escribiendo \n");
+        error=output_error(errors,write_matrix(argv[2],fp,m1));
+        return error;
+        if ((strcmp(argv[3], "--p") == 0)&&(argv[4]!=NULL)&&(strcmp(argv[5], "--o") == 0)&&(argv[6]!=NULL)){
             error=output_error(errors,null_matrix(m1->rows,m3));
             if(error!=0)
                 return error; //Hubo error en null
             error=output_error(errors,write_matrix(argv[6],fp2,m2)); //cargo m3 en el archivo
             return error; //salgo del programa bien, o mal
         }
-        if ((argv[3] == "--in2|-2")&&(argv[4]!=NULL)){
-            error=output_error(errors,read_matrix(argv[4],fp,m2));
+        if ((strcmp(argv[3], "--in2|-2") == 0)&&(argv[4]!=NULL)){ 
+            error=output_error(errors,read_matrix(argv[4],fp,&m2));
             if(error!=0)
                 return error; //Hubo error en carga de 2da matriz
-            if(argv[5]=="--op|-p"){
-                if((argv[6]=="sum")&&(argv[7]!=NULL)){
+            if(strcmp(argv[5], "--op|-p") == 0){ 
+                if((strcmp(argv[6], "sum") == 0)&&(argv[7]!=NULL)){ 
                     error=output_error(errors,sum(m1,m2,m3));
                     if(error!=0)
                         return error; //Hubo error en la suma
@@ -75,7 +84,7 @@ main(int argc, char *argv[])
                     if(error!=0)
                         return error; //Hubo error en escritura de matriz
                 }
-                if((argv[6]=="mult")&&(argv[7]!=NULL)){
+                if((strcmp(argv[6], "mult"))&&(argv[7]!=NULL)){ 
                     error=output_error(errors,mult(m1,m2,m3));
                     if(error!=0)
                         return error; //Hubo error en la multiplicacion
@@ -83,7 +92,7 @@ main(int argc, char *argv[])
                     if(error!=0)
                         return error; //Hubo error en escritura de matriz
                 }
-                if((argv[6]=="cmp")&&(argv[7]!=NULL)){
+                if((strcmp(argv[6], "cmp"))&&(argv[7]!=NULL)){
                     error=output_error(errors,cmp_matrix(m1,m2));
                     if(error!=0)
                         return error; //Hubo error en la comparacion
@@ -100,8 +109,8 @@ main(int argc, char *argv[])
             
          }
         else{
-             if (argv[3] == "dup"){
-                if((argv[4]=="--out|-o")&&(argv[5]!=NULL)){
+             if(strcmp(argv[3], "dup")){ 
+                if((strcmp(argv[4], "--out|-o"))&&(argv[5]!=NULL)){
                     error=output_error(errors,dup_matrix(m1,&m2)); //realizo copia de la matriz en m2
                     if(error!=0)
                         return error; //Hubo error en copia de matriz
@@ -109,8 +118,8 @@ main(int argc, char *argv[])
                 }
 
             }
-             if (argv[3] == "idty"){
-                 if((argv[4]=="--out|-o")&&(argv[5]!=NULL)){
+             if (strcmp(argv[3], "idty")){
+                 if((strcmp(argv[4], "--out|-o"))&&(argv[5]!=NULL)){
                     if(m1->rows>=m1->cols)
                         error=output_error(errors,idty_matrix(m1->rows,&m2)); //genero matriz identidad en m2 con rows
                     else
@@ -122,8 +131,8 @@ main(int argc, char *argv[])
 
 
              }
-             if (argv[3] == "mult_scalar"){
-                if((argv[4]=="--scalar|-s")&&(argv[5]!=NULL)&&(argv[6]=="--out|-o")&&(argv[7]!=NULL)){ 
+             if (strcmp(argv[3], "mult_scalar")){  
+                if((strcmp(argv[4], "--scalar|-s"))&&(argv[5]!=NULL)&&(strcmp(argv[6], "--out|-o"))&&(argv[7]!=NULL)){ 
                     int ia = *(argv[5]) - '0';
                     error=output_error(errors,mult_scalar(ia,m1,m3)); //genero mult_scalar en m3
                     if(error==0) //si no hay error

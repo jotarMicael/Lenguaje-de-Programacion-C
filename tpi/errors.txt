@@ -1,1 +1,1 @@
-Error desconocido (UNKNOWN)
+NO hay error (OK)

@@ -15,7 +15,9 @@ typedef int error_t;
 #define   E_WRITE_ERROR   5
 #define   E_FILE_ERROR    6
 #define   E_INVALID_ERROR 7
+#define   ERROR_INCOMPATIBLE_MATRICES 8
 #define   E_NOTIMPL_ERROR 10
+
 
 int output_error(FILE *fp, error_t e);
 

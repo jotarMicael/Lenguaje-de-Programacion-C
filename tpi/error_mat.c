@@ -2,29 +2,42 @@
 
 int output_error(FILE *fp, error_t e)
 {
-  fp = fopen ( "errors.txt", "w" ); 
+  fp = fopen ( "errors.txt", "a" ); 
   switch (e)
     {
   case -E_OK:
-    return fprintf(fp, "NO hay error (OK)");
+    fprintf(fp, "NO hay error (OK)");
+    return E_OK;
   case -E_READ_ERROR:
-    return fprintf(fp, "Error de lectura (READ)");
+    fprintf(fp, "Error de lectura (READ)");
+    return E_READ_ERROR;
   case -E_FORMAT_ERROR:
-    return fprintf(fp, "Error de formato (FORMAT)");
+    fprintf(fp, "Error de formato (FORMAT)");
+    return -E_FORMAT_ERROR;
   case -E_ALLOC_ERROR:
-    return fprintf(fp, "Error de memoria (ALLOC)");
+    fprintf(fp, "Error de memoria (ALLOC)");
+    return E_ALLOC_ERROR;
   case -E_SIZE_ERROR:
-    return fprintf(fp, "Error de dimension (SIZE)");
+    fprintf(fp, "Error de dimension (SIZE)");
+    return E_SIZE_ERROR;
   case -E_WRITE_ERROR:
-    return fprintf(fp, "Error de escritura (WRITE)");
+    fprintf(fp, "Error de escritura (WRITE)");
+    return E_WRITE_ERROR;
   case -E_NOTIMPL_ERROR:
-    return fprintf(fp, "No implementado aun (NOTIMPL)");
+    fprintf(fp, "No implementado aun (NOTIMPL)");
+    return E_NOTIMPL_ERROR;
   case -E_FILE_ERROR:
-    return fprintf(fp, "Error de archivo (FILE)");
+    fprintf(fp, "Error de archivo (FILE)");
+    return E_FILE_ERROR;
   case -E_INVALID_ERROR:
-    return fprintf(fp, "Error de parametro (PARAMETER)");   
+    fprintf(fp, "Error de parametro (PARAMETER)");   
+    return E_INVALID_ERROR;
+  case -ERROR_INCOMPATIBLE_MATRICES:
+    fprintf(fp, "Error de matrices (INCOMPATIBLES)");   
+    return ERROR_INCOMPATIBLE_MATRICES;
   default:
-    return fprintf(fp, "Error desconocido (UNKNOWN)");
+    fprintf(fp, "Error desconocido (UNKNOWN)");
+    return E_NOTIMPL_ERROR;
     }
   fclose(fp);
 }

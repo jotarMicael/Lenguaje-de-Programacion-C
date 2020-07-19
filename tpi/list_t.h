@@ -5,7 +5,7 @@
 
 struct nodo {
 
-	int dato;
+	double dato;
 	struct nodo *siguiente;
 
 };
