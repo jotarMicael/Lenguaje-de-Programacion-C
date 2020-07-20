@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "matriz.h"
 #include "list_t.h"
-#include "stdbool.h"
+
 
 #define SCALAR (0.5)
 
@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
   matrix_t  *m0;
   matrix_t  *m1;  
   matrix_t  *maux1, *maux2; 
-  double     f;
-  list_t     l;
+  T_TYPE    f;
+  tpuntero     l;
   FILE *fp=NULL;
   
 
@@ -159,17 +159,16 @@ int main(int argc, char *argv[])
   fprintf(stderr,"-----------------\n");
   fprintf(stderr,"(0 * ma) = m0 :%d %d\n",cmp_matrix(md,m0), cmp_matrix(md,m0));
   fprintf(stderr,"-----------------\n");
-  free_matrix(&md);
+  
 
   // Asociativa de la mult
   // A * (B * C) = D  
   fprintf(stderr,"mb = \n"); matrix_print(mb);
   fprintf(stderr,"mc = \n"); matrix_print(mc);
-
-  mult(mb,mc,&maux1);
-  mult(ma,maux1,&md);
+  fprintf(stderr,"ma = \n"); matrix_print(ma);
 
   // (A * B) * C = E
+  
   free_matrix(&maux1);
   mult(ma,mb,&maux1); 
   mult(maux1,mc,&me);
@@ -206,10 +205,12 @@ int main(int argc, char *argv[])
   free_matrix(&me);
   free_matrix(&maux1);  
   free_matrix(&maux2);  
+
   create_and_fill_matrix(get_rows(ma), get_cols(ma), 3.0, &md);
-  set_elem_matrix(2,2,1000.0,&md);
-  set_elem_matrix(4,4,2000.0,&md);
-  set_elem_matrix(5,5,2000.0,&md);   
+  set_elem_matrix(0,0,100.0,&md);
+  set_elem_matrix(1,1,200.0,&md);
+  set_elem_matrix(2,2,200.0,&md);   
+
   fprintf(stderr,"md=\n"); matrix_print(md);
   printf("-------------\n");
   for(int i=0;i<get_rows(md);i++)
@@ -222,23 +223,18 @@ int main(int argc, char *argv[])
       printf("\n");
     }
   printf("-------------\n");
-  list_new(l);
+  list_new(&l);
   matrix2list(md, &l);
-  while(l!=NULL){
-      fprintf(stderr,"dato= %lf\n",l->dato);
-      l=l->siguiente;
-  }
+  imprimirLista(l);
   printf("\n-------------\n");
-  destroy_list(l);
+  borrarLista(&l);
   free_matrix(&md);
   clear_matrix(ma);
   matrix_print(ma);
+  free_matrix(&ma);
   free_matrix(&mb);
   free_matrix(&mc);
   free_matrix(&m0);
   free_matrix(&m1);
   return 0;
 }
-
-
-/*** EOF **/

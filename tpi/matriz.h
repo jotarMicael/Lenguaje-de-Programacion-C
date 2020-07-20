@@ -152,17 +152,17 @@ error_t clear_matrix(matrix_t *m);
 /***
  * Carga la fila "pos" de la matriz ma en la lista "l"
  */
-error_t get_row(unsigned int pos, const matrix_t *ma, list_t *l);
+error_t get_row(unsigned int pos, const matrix_t *ma, tpuntero *l);
 
 /***
  * Carga la columna "pos" de la matriz "ma" en la lista "l"
  */
-error_t get_col(unsigned int pos, const matrix_t *ma, list_t *l);
+error_t get_col(unsigned int pos, const matrix_t *ma, tpuntero *l);
 
 /***
  * Pasa la matriz "ma" a la lista "l"
  */
-error_t matrix2list(const matrix_t *ma, list_t *l);
+error_t matrix2list(const matrix_t *ma, tpuntero *l);
 
 /***
  * Redimensiona la matriz "ma" a las dimensiones "newrows*newcols"

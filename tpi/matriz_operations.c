@@ -22,7 +22,7 @@ matrix_t *matrix_create(int n, int m, matrix_fmt_t c)
   
     matrix_t *M;
     
-    M=(matrix_t *)malloc(sizeof(matrix_t));
+    M=malloc(sizeof(matrix_t));
 
     if(M == NULL)
     {
@@ -183,7 +183,7 @@ if(*m==NULL){
 
  }
  else{
-  char ch;
+  
   if((*m)->fmt==2){ //proceso M2
         for(int i=0; i<(get_rows(*m)); i++ ){ 
           for(int j=0; j<(get_cols(*m)); j++ ){
@@ -202,7 +202,7 @@ if(*m==NULL){
 
   }
  fclose(fp);
- return -E_OK;
+ return E_OK;
 }
 
 
@@ -483,8 +483,6 @@ error_t cmp_matrix(const matrix_t *ma, const matrix_t *mb){
     for (int i = 0; i < get_rows(mb); i++) {
       for (int j = 0; j <get_cols(mb); j++) {
         if ((ma->matriz[i][j])!=(mb->matriz[i][j])){
-          fprintf(stderr,"valA: %.2lf\n",ma->matriz[i][j]);
-          fprintf(stderr,"valB: %.2lf\n",mb->matriz[i][j]);
           return ERROR_INCOMPATIBLE_MATRICES;
         } //retorna 8 si son diferentes
       }
@@ -496,14 +494,15 @@ error_t cmp_matrix(const matrix_t *ma, const matrix_t *mb){
 
 error_t free_matrix(matrix_t **m)
 {
+    if(*m!=NULL){
     for(int i = 0; i < get_rows(*m); i++){ 
        FREE((*m)->matriz[i]);
        
     }
     FREE((*m)->matriz);
     FREE(*m);
-    return -E_OK;
- 
+  }
+ return E_OK;
 
   
 }
@@ -524,17 +523,13 @@ error_t clear_matrix(matrix_t *m)
   return -E_NOTIMPL_ERROR;      
 }
   
-error_t get_row(unsigned int pos, const matrix_t *ma, list_t *l)
+error_t get_row(unsigned int pos, const matrix_t *ma, tpuntero *l)
 {
-  list_t aux;
-  aux=NULL;
   if((pos<get_rows(ma))&&(pos>=0)){
     if((ma!=NULL)&&(l!=NULL)){
-    list_new(aux);
     for(int j=0; j<(get_rows(ma)); j++ ){
-      (*l)=list_append(aux,ma->matriz[pos][j]);
+      insertarEnLista(l,ma->matriz[pos][j]);
     }
-    destroy_list(aux);
     return -E_OK;
     }
     return -E_NOTIMPL_ERROR;  
@@ -544,17 +539,13 @@ error_t get_row(unsigned int pos, const matrix_t *ma, list_t *l)
       
 }
 
-error_t get_col(unsigned int pos, const matrix_t *ma, list_t *l)
+error_t get_col(unsigned int pos, const matrix_t *ma, tpuntero *l)
 {
-  list_t aux;
-  aux=NULL;
   if((pos<ma->cols)&&(pos>=0)){
     if((ma!=NULL)&&(l!=NULL)){
-    list_new(aux);
     for(int i=0; i<(get_rows(ma)); i++ ){
-      (*l)=list_append(aux,ma->matriz[i][pos]);
+      insertarEnLista(l,ma->matriz[i][pos]);
     }
-    destroy_list(aux);
     return -E_OK;
     }
     return -E_NOTIMPL_ERROR;  
@@ -563,19 +554,16 @@ error_t get_col(unsigned int pos, const matrix_t *ma, list_t *l)
   
 }
 
-error_t matrix2list(const matrix_t *ma, list_t *l)
+error_t matrix2list(const matrix_t *ma, tpuntero *l)
 {
-    list_t aux;
-    aux=NULL;
+   
     if ((ma!=NULL)&&(l!=NULL)){
-      list_new(aux);
+      
       for(int i=0; i<(get_rows(ma)); i++ ){ 
         for(int j=0; j<(get_cols(ma)); j++ ){
-          aux=list_append(aux,ma->matriz[i][j]);
-          fprintf(stderr,"dato= %lf\n",aux->dato);
+          insertarEnLista(l,ma->matriz[i][j]);
         }
       }
-      l=&aux;
       return -E_OK;
     }
 

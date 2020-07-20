@@ -60,14 +60,14 @@ main(int argc, char *argv[])
     matrix_t *m1=NULL,*m2=NULL,*m3=NULL;
     int error;
     T_TYPE num;
-    FILE *fp=NULL,*fp2=NULL,*errors=NULL;
+    FILE *fp=NULL,*errors=NULL;
 
     int c;
-    int digit_optind = 0;
+   // int digit_optind = 0;
  
      while (1) {
          /*Este while parsea todos los argumentos de argv con la función getopt_long()*/
-         int this_option_optind = optind ? optind : 1;
+         //int this_option_optind = optind ? optind : 1;
          int option_index = 0;
          
          static struct option long_options[] = {
@@ -90,7 +90,7 @@ main(int argc, char *argv[])
              {"scalar",required_argument, 0, (T_TYPE) 's'},
              {0, 0, 0, 0}
          };
-         c = getopt_long (argc, argv, "OP_ARG_1:OP_ARG_2:s:OP_CALC:+:*:o:.:OP_HLPixzpfñdim",
+         c = getopt_long (argc, argv, "OP_ARG_1:OP_ARG_2:s:OP_CALC:+:*:o:.:OP_HLPixzpfdim",
          long_options, &option_index);
          if (c == -1)
          /*c es -1 cuando se terminan todos los argumentos, entonces sale del while*/
@@ -361,6 +361,9 @@ main(int argc, char *argv[])
              printf ("%s ", argv[optind++]);
          printf ("\n");
       }
-     // free_matrix(&m1);free_matrix(&m2);free_matrix(&m3);
-    exit(0);
+     
+        free_matrix(&m1);free_matrix(&m2);free_matrix(&m3);
+        free(m1);
+        return 0;
+      
  }
