@@ -110,8 +110,10 @@ main(int argc, char *argv[])
                     printf ("Matriz cargada correctamente\n"); 
                     printf("\n");
                  }
-                 else
-                    printf ("Argumento incorrecto\n");                 
+                 else{
+                    printf ("Debe ingresar un archivo de matriz (M1,M2)\n");   
+                    return E_READ_ERROR;
+                 }              
                  break;
              case OP_CALC:
                  printf("\n");
@@ -127,16 +129,16 @@ main(int argc, char *argv[])
                     printf ("Matriz cargada correctamente\n"); 
                     printf("\n");
                  }
-                 else
-                    printf ("Argumento incorrecto\n");                 
+                 else{
+                    printf ("Debe ingresar un archivo de matriz (M1,M2)\n");      
+                    return E_READ_ERROR;
+                 }                  
                  break;    
              case 'd':
                  printf ("Opcion: duplicar matriz\n");
                  m2=m1;
                  break;
              case 'i':
-                 /*Si uno de los argumentos de main es --compress=LZW o -cLZW entra en este case
-                 c vale 'c' y optarg vale "LZW"*/
                  printf ("Opcion: matriz identidad\n");
                     //printf("Se ha leido el archivo: %s", optarg);
                     if(get_cols(m1)>=get_rows(m1))   
@@ -151,7 +153,6 @@ main(int argc, char *argv[])
                     printf("\n");
                  break;
              case '2': 
-                 /*Si uno de los argumentos de main es --decompress o -d entra en este case*/
                  printf("\n");
                  printf ("Opcion: leer segunda matriz de archivo\n");
                  if (0 != optarg){
@@ -166,7 +167,10 @@ main(int argc, char *argv[])
                         printf("\n");
                     }
                  }
-                
+                 else{
+                    printf ("Debe ingresar un archivo de matriz (M1,M2)\n");      
+                    return E_READ_ERROR;
+                  }    
                  break;
              case 'o':
                  printf ("Opcion: Escribir en el archivo\n");
@@ -180,15 +184,17 @@ main(int argc, char *argv[])
                         printf ("Matriz cargada en el archivo '%s' correctamente\n",optarg);
                         printf("\n");
                     }
-
                  }
-                  else 
-                    printf ("Debe ingresarse un nombre para el archivo \n");  
+                 else{
+                    printf ("Debe ingresar el nombre de un archivo como salida\n");      
+                    return E_WRITE_ERROR;
+                  }  
                  break;
              case 'p':
                  printf ("Operacion: ");
                  break;
              case 's':
+               if (0 != optarg){
                  printf ("Scalar\n");
                  printf("\n");
                  num=atof(optarg);
@@ -199,11 +205,17 @@ main(int argc, char *argv[])
                  } */
                  printf ("El numero a multiplicar es: %s\n", optarg);
                  printf("\n");
+               }
+               else{
+                    printf ("Debe ingresar un numero para realizar la multiplicacion\n");      
+                    return E_READ_ERROR;
+               }  
                  break;
              case OP_HLP:
                  help();
                  break;
              case 'm':
+                 if(num!=NULL){
                  printf ("Opcion: multiplicar matriz por un scalar \n");
                  error=output_error(errors,mult_scalar(num,m1,&m2));
                  if(error != 0)
@@ -214,8 +226,14 @@ main(int argc, char *argv[])
                     printf("\n");
 
                  }
+                 }
+                 else{
+                     printf ("Debe ingresar un numero para realizar la multiplicacion\n");      
+                    return E_READ_ERROR;
+                 }
                  break;
              case 'x':
+                 if ((m1!=NULL)&&(m2!=NULL)){
                  printf ("Opcion: multiplicar 2 matrices\n");
                  error=output_error(errors,mult(m1,m2,&m3));
                  if(error != 0){
@@ -228,8 +246,14 @@ main(int argc, char *argv[])
                     printf("\n");
                     m2=m3;
                  }
+                 }
+                 else{
+                    printf ("No se encuentran cargadas las matrices m1 o m2\n");      
+                    return E_WRITE_ERROR;
+                 }
                  break;
              case 'f':
+                 if ((m1!=NULL)&&(m2!=NULL)){
                  printf ("Opcion: sumar 2 matrices\n");
                  error=output_error(errors,sum(m1,m2,&m3));
                  if(error != 0){
@@ -242,8 +266,14 @@ main(int argc, char *argv[])
                     printf("\n");
                     m2=m3;
                  }
+                 }
+                 else{
+                    printf ("No se encuentran cargadas las matrices m1 o m2\n");      
+                    return E_WRITE_ERROR;
+                 }
                  break;
              case 'e':
+                 if (m1!=NULL){
                  printf ("Opcion: matriz nula\n");
                     error=output_error(errors,null_matrix(get_rows(m1),get_cols(m1),&m2));
                     printf("\n");
@@ -254,8 +284,14 @@ main(int argc, char *argv[])
                     matrix_print(m2);
                     printf ("Matriz nula generada correctamente\n"); 
                     printf("\n");
+                 }
+                 else{
+                    printf ("No se encuentran cargada la matriz m1\n");      
+                    return E_WRITE_ERROR;
+                 }
                  break;
               case 'z':
+                 if ((m1!=NULL)&&(m2!=NULL)){
                  printf ("Opcion: comparar 2 matrices\n");
                  error=output_error(errors,cmp_matrix(m1,m2));
                  if(error == 8){
@@ -268,8 +304,12 @@ main(int argc, char *argv[])
                         return error;
                     }
                     printf ("Las matrices son iguales \n");
-                    printf("\n");
-                    
+                    printf("\n");     
+                 }
+                 }
+                 else{
+                    printf ("No se encuentran cargadas las matrices m1 o m2\n");      
+                    return E_WRITE_ERROR;
                  }
                  break;
               case '+':
