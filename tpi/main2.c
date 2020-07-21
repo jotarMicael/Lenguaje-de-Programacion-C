@@ -104,8 +104,10 @@ main(int argc, char *argv[])
                     printf("Se ha leido el archivo: %s", optarg);
                     error=output_error(errors,read_matrix(optarg,fp,&m1));
                     printf("\n");
-                    if(error != 0)
-                        printf ("ERROR!\n");
+                    if(error != 0){
+                        printf ("Error en la lectura de la matriz\n");
+                        return E_READ_ERROR;
+                    }
                     matrix_print(m1);
                     printf ("Matriz cargada correctamente\n"); 
                     printf("\n");
@@ -123,8 +125,9 @@ main(int argc, char *argv[])
                     printf("\n");
                     error=output_error(errors,read_matrix(optarg,fp,&m1));
                     printf("\n");
-                    if(error != 0)
+                    if(error != 0){
                         printf ("ERROR!\n");
+                    }
                     matrix_print(m1);
                     printf ("Matriz cargada correctamente\n"); 
                     printf("\n");
@@ -136,7 +139,7 @@ main(int argc, char *argv[])
                  break;    
              case 'd':
                  printf ("Opcion: duplicar matriz\n");
-                 m2=m1;
+                 dup_matrix(m1,&m2);
                  break;
              case 'i':
                  printf ("Opcion: matriz identidad\n");
@@ -178,11 +181,14 @@ main(int argc, char *argv[])
                     printf("Se va a escribir en el archivo: '%s'", optarg);
                     error=output_error(errors,write_matrix(optarg,fp,m2));
                     printf("\n");
-                    if(error != 0)
-                        printf ("ERROR!\n");
+                    if(error != 0){
+                        printf ("Ha ocurrido un error en al escritura del archivo\n");
+                        return E_WRITE_ERROR;
+                    }
                     else{
                         printf ("Matriz cargada en el archivo '%s' correctamente\n",optarg);
                         printf("\n");
+                        return E_OK;
                     }
                  }
                  else{
@@ -215,7 +221,7 @@ main(int argc, char *argv[])
                  help();
                  break;
              case 'm':
-                 if(num!=NULL){
+                 //if(num!=NULL){
                  printf ("Opcion: multiplicar matriz por un scalar \n");
                  error=output_error(errors,mult_scalar(num,m1,&m2));
                  if(error != 0)
@@ -226,11 +232,11 @@ main(int argc, char *argv[])
                     printf("\n");
 
                  }
-                 }
-                 else{
+                // }
+                // else{
                      printf ("Debe ingresar un numero para realizar la multiplicacion\n");      
                     return E_READ_ERROR;
-                 }
+            //     }
                  break;
              case 'x':
                  if ((m1!=NULL)&&(m2!=NULL)){
@@ -327,6 +333,10 @@ main(int argc, char *argv[])
                         printf("\n");
                     }
                  }
+                 else{
+                    printf ("Debe ingresar como parametro la segunda matriz a sumar\n");      
+                    return E_READ_ERROR;
+                 }
                 
                  printf ("Opcion: M1 + M2 \n");
                  error=output_error(errors,sum(m1,m2,&m3));
@@ -356,6 +366,10 @@ main(int argc, char *argv[])
                         printf("\n");
                     }
                  }
+                 else{
+                    printf ("Debe ingresar como parametro la segunda matriz a multiplicar\n");      
+                    return E_READ_ERROR;
+                 }
                 printf ("Opcion: multiplicar 2 matrices\n");
                  error=output_error(errors,mult(m1,m2,&m3));
                  if(error != 0){
@@ -376,6 +390,7 @@ main(int argc, char *argv[])
                      printf ("ERROR: Debe ingresar un numero!\n");
                      return error;
                  }*/
+                 if (0 != optarg){
                  printf ("El numero a multiplicar es: %s\n", optarg);
                  printf("\n");
                  error=output_error(errors,mult_scalar(num,m1,&m2));
@@ -386,6 +401,12 @@ main(int argc, char *argv[])
                     printf ("Matriz multiplicada correctamente \n");
                     printf("\n");
                  }
+                 }
+                 else{
+                    printf ("Debe ingresar como parametro un numero para multiplicar\n");      
+                    return E_READ_ERROR; 
+                 }
+
                 break;
              default:
                  /*Si el argumento no machea con ninguna opción conocida, debería ser un error en los
@@ -403,7 +424,6 @@ main(int argc, char *argv[])
       }
      
         free_matrix(&m1);free_matrix(&m2);free_matrix(&m3);
-        free(m1);
-        return 0;
-      
+        
+     exit(0);
  }

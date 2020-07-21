@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include "list_t.h"
 
@@ -9,7 +8,7 @@ void list_new(tpuntero *cabeza){
 	*cabeza=NULL;
 }
 
-void insertarEnLista (tpuntero *cabeza, int e){
+void insert_InList(tpuntero *cabeza, int e){
     tpuntero nuevo; //Creamos un nuevo nodo
     nuevo = malloc(sizeof(tnodo)); //Utilizamos malloc para reservar memoria para ese nodo
     nuevo->valor = e; //Le asignamos el valor ingresado por pantalla a ese nodo
@@ -17,7 +16,7 @@ void insertarEnLista (tpuntero *cabeza, int e){
     *cabeza = nuevo; //Cabeza pasa a ser el ultimo nodo agregado
 }
  
-void imprimirLista(tpuntero cabeza){
+void print_List(tpuntero cabeza){
     while(cabeza != NULL){ //Mientras cabeza no sea NULL
         printf("%.2lf",cabeza->valor); //Imprimimos el valor del nodo
         printf("\t");
@@ -25,7 +24,7 @@ void imprimirLista(tpuntero cabeza){
     }
 }
  
-void borrarLista(tpuntero *cabeza){ 
+void delete_List(tpuntero *cabeza){ 
     tpuntero actual; //Puntero auxiliar para eliminar correctamente la lista
   
     while(*cabeza != NULL){ //Mientras cabeza no sea NULL

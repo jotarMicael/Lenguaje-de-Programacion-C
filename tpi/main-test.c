@@ -48,6 +48,16 @@ int main(int argc, char *argv[])
   fprintf(stderr,"-----------------\n");
   fprintf(stderr,"md=\n"); matrix_print(md);
   fprintf(stderr,"-----------------\n");
+  if((cmp_matrix(mc,md)==E_OK)&&(cmp_matrix(md,mc)==E_OK)){
+      fprintf(stderr,"Se ha comprobado la propiedad Conmutativa");
+      fprintf(stderr,"\n");
+      fprintf(stderr,"\n"); }
+  else{
+    fprintf(stderr,"Ocurrio un error en la comprobacion");
+    fprintf(stderr,"\n"); 
+    fprintf(stderr,"\n"); 
+  }
+
   free_matrix(&md);
   free_matrix(&mc);
   
@@ -225,9 +235,9 @@ int main(int argc, char *argv[])
   printf("-------------\n");
   list_new(&l);
   matrix2list(md, &l);
-  imprimirLista(l);
+  print_List(l);
   printf("\n-------------\n");
-  borrarLista(&l);
+  delete_List(&l);
   free_matrix(&md);
   clear_matrix(ma);
   matrix_print(ma);

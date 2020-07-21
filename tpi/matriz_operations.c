@@ -104,19 +104,19 @@ error_t read_matrix(char *filename,FILE *fp, matrix_t **m){
  // Open file
   
    if (!(fp = fopen(filename,"rb")))
-     return -E_FILE_ERROR; 
+     return E_FILE_ERROR; 
 
  //check the matrix header format
  
  if ((fgets(buf, N_BUF_LENGTH, fp))==NULL)
     {
       fprintf(stderr, "Error al leer header format \n");
-      return -E_FORMAT_ERROR;      
+      return E_FORMAT_ERROR;      
     }
  if (buf[0] != 'M')
    {
      fprintf(stderr, "Error de formato, debe ser ('M1 o M2')\n");
-     return -E_FORMAT_ERROR;
+     return E_FORMAT_ERROR;
    }
 if ((buf[0]=='M')&&(buf[1]=='1'))
     fmt=M1;//fmt=M1
@@ -124,7 +124,7 @@ else{
       if((buf[0]=='M')&&(buf[1]=='2'))
         fmt=M2;//fmt=M2
       else
-        return -E_FORMAT_ERROR;
+        return E_FORMAT_ERROR;
     }
 
  /****** 
@@ -134,7 +134,7 @@ else{
  if ((fgets(buf, N_BUF_LENGTH, fp))==NULL)
     {
       fprintf(stderr, "Error al leer header format 2\n");
-      return -E_FORMAT_ERROR;      
+      return E_FORMAT_ERROR;      
     }
 while(buf[0]==C_COMMENT){
      fgets(buf, N_BUF_LENGTH, fp); //leo todos los comentarios
@@ -143,7 +143,7 @@ while(buf[0]==C_COMMENT){
 
 if(fseek(fp, INIT_C_R, SEEK_CUR)!=0){
   fprintf(stderr, "Error al leer header format 3\n");
-  return -E_FORMAT_ERROR; 
+  return E_FORMAT_ERROR; 
 }
 
 char c;
@@ -155,20 +155,25 @@ if(fscanf(fp,"%d",&rows) == 1){
 }
 else{
   fprintf(stderr, "Error al leer las dimensiones 1\n");
-  return -E_SIZE_ERROR;   
+  return E_SIZE_ERROR;   
 }
 if(*m==NULL){
   fprintf(stderr, "Error al crear la matriz\n");
-  return -E_ALLOC_ERROR;
+  return E_ALLOC_ERROR;
 }
 
  //read matrix size information
 
  if((get_rows(*m)==E_NOTIMPL_ERROR)||(get_cols(*m)==E_NOTIMPL_ERROR)){
   fprintf(stderr, "Error en las filas y/o columnas de la matriz \n");
-  return -E_READ_ERROR;
+  return E_READ_ERROR;
  }
  
+ if (getc(fp) == EOF)
+      {
+        return E_READ_ERROR;
+      }
+
  
  if((*m)->fmt==1){ //proceso M1
 
@@ -183,24 +188,35 @@ if(*m==NULL){
 
  }
  else{
+
+    unsigned int len= get_rows(*m) * get_cols(*m);
+
+    // temporal, para leer los datos todos seguidos
+    double *data = (double *) malloc(sizeof(double) * len);
+
+    if (!data){
+      return E_ALLOC_ERROR;
+    }
   
-  if((*m)->fmt==2){ //proceso M2
+        if (fread(data, sizeof(double), len, fp) != len)
+        {
+            free(data);
+            return E_ALLOC_ERROR;
+        }
+        if (ferror(fp) || (!feof(fp) && (getc(fp) != EOF)))
+        {
+            free(data);
+            return E_ALLOC_ERROR;
+        } 
+
         for(int i=0; i<(get_rows(*m)); i++ ){ 
           for(int j=0; j<(get_cols(*m)); j++ ){
-             fread(&(*m)->matriz[i][j], sizeof(T_TYPE), 1, fp); //El error se encuentra en esta
-                fprintf(stderr, "valor: %lf\n",dvalue); //parte, y no logramos leer desde el archivo binario
-                (*m)->matriz[i][j]=dvalue;               
+              (*m)->matriz[i][j] = data[i * cols + j];
           }
         }
-      
-      
-
-      
- }
-  else 
-    fprintf(stderr, "Error en la dimension que posee el archivo");
 
   }
+
  fclose(fp);
  return E_OK;
 }
@@ -250,24 +266,21 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
 
       }
 
-      else{ int *res;
-		    res=NULL;
-          if(m->fmt==2){ //proceso M2
-              for(int i=0; i<(get_rows(m)); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
-                for(int j=0; j<(get_cols(m)); j++ ){
-                    *res=fwrite(&m->matriz[i][j], sizeof(int), 1, fp);
-                  if(res==NULL){
-                    fclose(fp); 
-                    return -E_READ_ERROR;
-                  }
-                }
-              }  
-
-          }
-          else{
-              fclose(fp); 
-              return -E_SIZE_ERROR;
-          }
+      else{ 
+        // los datos en formato binario se escriben uno a uno
+        unsigned int count = get_rows(m) * get_cols(m);
+        unsigned int written = 0;
+        for (int i = 0; i < get_rows(m); i++)
+        {
+            for (int j = 0; j < get_cols(m); j++)
+            {
+                if (fwrite(&m->matriz[i][j], sizeof(T_TYPE), 1, fp) != 1)
+                    return E_READ_ERROR;
+                written++;
+            }
+        }
+        if (count != written)
+            return E_WRITE_ERROR;
       }
     
     fclose(fp); 
@@ -280,7 +293,6 @@ error_t write_matrix(char *filename,FILE *fp, const matrix_t *m)
 
 error_t dup_matrix(const matrix_t *m_src, matrix_t **m_dst)
 {
-   *(m_dst)=NULL;
   *(m_dst)=matrix_create(get_rows(m_src),get_cols(m_src),m_src->fmt);
   if((*(m_dst)!=NULL)&&(m_src!=NULL)){
      for(int i=0; i<(get_rows(m_src)); i++ ){ //Asigno valores al archivo , cant de filas y columnas exactas que posee la matriz
@@ -501,6 +513,7 @@ error_t free_matrix(matrix_t **m)
     }
     FREE((*m)->matriz);
     FREE(*m);
+    *m=NULL;
   }
  return E_OK;
 
@@ -528,7 +541,7 @@ error_t get_row(unsigned int pos, const matrix_t *ma, tpuntero *l)
   if((pos<get_rows(ma))&&(pos>=0)){
     if((ma!=NULL)&&(l!=NULL)){
     for(int j=0; j<(get_rows(ma)); j++ ){
-      insertarEnLista(l,ma->matriz[pos][j]);
+      insert_InList(l,ma->matriz[pos][j]);
     }
     return -E_OK;
     }
@@ -544,7 +557,7 @@ error_t get_col(unsigned int pos, const matrix_t *ma, tpuntero *l)
   if((pos<ma->cols)&&(pos>=0)){
     if((ma!=NULL)&&(l!=NULL)){
     for(int i=0; i<(get_rows(ma)); i++ ){
-      insertarEnLista(l,ma->matriz[i][pos]);
+      insert_InList(l,ma->matriz[i][pos]);
     }
     return -E_OK;
     }
@@ -561,7 +574,7 @@ error_t matrix2list(const matrix_t *ma, tpuntero *l)
       
       for(int i=0; i<(get_rows(ma)); i++ ){ 
         for(int j=0; j<(get_cols(ma)); j++ ){
-          insertarEnLista(l,ma->matriz[i][j]);
+          insert_InList(l,ma->matriz[i][j]);
         }
       }
       return -E_OK;
