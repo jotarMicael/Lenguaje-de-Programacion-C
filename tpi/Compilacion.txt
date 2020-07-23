@@ -31,7 +31,7 @@ CON 2 MATRICES {
 CON --CALC {
 	
 
---calc test3.m --+ test4.m -o test60.m //sumar
+--calc test3.m --+ test3.m -o test60.m //sumar
 
 --calc test3.m --* test7.m -o test60.m //multiplicar
 

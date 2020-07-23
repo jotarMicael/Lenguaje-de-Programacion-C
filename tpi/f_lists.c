@@ -8,7 +8,7 @@ void list_new(tpuntero *cabeza){
 	*cabeza=NULL;
 }
 
-void insert_InList(tpuntero *cabeza, int e){
+void insert_InList(tpuntero *cabeza, double e){
     tpuntero nuevo; //Creamos un nuevo nodo
     nuevo = malloc(sizeof(tnodo)); //Utilizamos malloc para reservar memoria para ese nodo
     nuevo->valor = e; //Le asignamos el valor ingresado por pantalla a ese nodo
