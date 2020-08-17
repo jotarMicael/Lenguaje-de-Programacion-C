@@ -110,7 +110,7 @@ error_t read_matrix(char *filename,FILE *fp, matrix_t **m){
  
  if ((fgets(buf, N_BUF_LENGTH, fp))==NULL)
     {
-      fprintf(stderr, "Error al leer header format \n");
+      fprintf(stderr, "Error de formato, debe ser ('M1 o M2')\n");
       return E_FORMAT_ERROR;      
     }
  if (buf[0] != 'M')
@@ -123,8 +123,11 @@ if ((buf[0]=='M')&&(buf[1]=='1'))
 else{
       if((buf[0]=='M')&&(buf[1]=='2'))
         fmt=M2;//fmt=M2
-      else
+      else{
+        
+        fprintf(stderr, "Error de formato, debe ser ('M1 o M2')\n");
         return E_FORMAT_ERROR;
+      }
     }
 
  /****** 
@@ -496,9 +499,9 @@ error_t cmp_matrix(const matrix_t *ma, const matrix_t *mb){
   }
 
   else{
-    for (int i = 0; i < get_rows(mb); i++) {
-      for (int j = 0; j <get_cols(mb); j++) {
-        if ((ma->matriz[i][j])!=(mb->matriz[i][j])){
+    for (int i = 0; i < get_rows(ma); i++) {
+      for (int j = 0; j <get_cols(ma); j++) {
+        if ((T_TYPE)(ma->matriz[i][j]) != (T_TYPE)(mb->matriz[i][j])){
           return ERROR_INCOMPATIBLE_MATRICES;
         } //retorna 8 si son diferentes
       }

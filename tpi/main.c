@@ -4,6 +4,33 @@
 #include "matriz.h"
 #include "list_t.h"
 #include "error_mat.h"
+#define _GNU_SOURCE
+#include <getopt.h> /*para getopt_long*/ 
+
+#define OP_ARG_1          '1'
+#define OP_ARG_1_LONG     "in1"
+
+#define OP_ARG_2          '2'
+#define OP_ARG_2_LONG     "in2"
+
+#define OP_ARG_O          'o'
+#define OP_ARG_O_LONG     "out"
+
+#define OP_CALC           'c'
+#define OP_CALC_LONG     "calc"
+
+#define OP_ARG_S          's'
+#define OP_ARG_S_LONG     "scalar"
+
+#define OP_ARG_OPS        'p'
+#define OP_ARG_OPS_LONG   "op"
+
+#define OP_HLP            'h'
+#define OP_HLP_LONG       "help"
+
+#define OP_SCA            's'
+#define OP_SCA_LONG       "scalar"
+
 
 void
 formato()
@@ -33,119 +60,473 @@ void help(){
 int
 main(int argc, char *argv[])
 {
-
-    matrix_t *m1=NULL,*m2=NULL; 
-    matrix_t **m3=NULL;
+    matrix_t *m1=NULL,*m2=NULL,*m3=NULL;
     int error;
-    FILE *fp=NULL,*fp2=NULL,*errors=NULL;
+    T_TYPE num;
+    FILE *fp=NULL,*errors=NULL;
 
-    // Revisamos si hay suficientes entradas desde terminal
-    if (argc >7)
-    {
-        formato();
-        error=output_error(errors,0);
-        return error;
-    }
+    int c;
+    char* out_name;
+    char* operation_name;
+    char* ptr2;
 
-    if(strcmp(argv[1], "--help") == 0){ 
-        help();
-        error=output_error(errors,0);
-        return error;
-    }
-
-    if ((strcmp(argv[1], "--1") == 0)&&(argv[2]!=NULL)){
-        error=output_error(errors,read_matrix(argv[2],fp,&m1));
-        if(error != 0)
-            return error;//Hubo error en carga de 1era matriz
-        if(m1==NULL)
-           fprintf(stderr, "hola \n"); 
-        matrix_print(m1);
-        fprintf(stderr, "FORMAT ES: %d\n",m1->fmt);
-        fprintf(stderr, "Escribiendo \n");
-        error=output_error(errors,write_matrix(argv[2],fp,m1));
-        return error;
-        if ((strcmp(argv[3], "--p") == 0)&&(argv[4]!=NULL)&&(strcmp(argv[5], "--o") == 0)&&(argv[6]!=NULL)){
-            error=output_error(errors,null_matrix(m1->rows,m3));
-            if(error!=0)
-                return error; //Hubo error en null
-            error=output_error(errors,write_matrix(argv[6],fp2,m2)); //cargo m3 en el archivo
-            return error; //salgo del programa bien, o mal
-        }
-        if ((strcmp(argv[3], "--in2|-2") == 0)&&(argv[4]!=NULL)){ 
-            error=output_error(errors,read_matrix(argv[4],fp,&m2));
-            if(error!=0)
-                return error; //Hubo error en carga de 2da matriz
-            if(strcmp(argv[5], "--op|-p") == 0){ 
-                if((strcmp(argv[6], "sum") == 0)&&(argv[7]!=NULL)){ 
-                    error=output_error(errors,sum(m1,m2,m3));
-                    if(error!=0)
-                        return error; //Hubo error en la suma
-                    error=output_error(errors,write_matrix(argv[7],fp2,(*m3))); //cargo m3 en el archivo
-                    if(error!=0)
-                        return error; //Hubo error en escritura de matriz
-                }
-                if((strcmp(argv[6], "mult"))&&(argv[7]!=NULL)){ 
-                    error=output_error(errors,mult(m1,m2,m3));
-                    if(error!=0)
-                        return error; //Hubo error en la multiplicacion
-                    error=output_error(errors,write_matrix(argv[7],fp2,(*m3))); //cargo m3 en el archivo
-                    if(error!=0)
-                        return error; //Hubo error en escritura de matriz
-                }
-                if((strcmp(argv[6], "cmp"))&&(argv[7]!=NULL)){
-                    error=output_error(errors,cmp_matrix(m1,m2));
-                    if(error!=0)
-                        return error; //Hubo error en la comparacion
-                    error=output_error(errors,write_matrix(argv[7],fp2,m2)); //cargo m2 en el archivo
-                    if(error!=0)
-                        return error; //Hubo error en escritura de matriz
-                }
-
-                return output_error(errors,7);
-
-            }
-            else
-                return output_error(errors,7);
-            
-         }
-        else{
-             if(strcmp(argv[3], "dup")){ 
-                if((strcmp(argv[4], "--out|-o"))&&(argv[5]!=NULL)){
-                    error=output_error(errors,dup_matrix(m1,&m2)); //realizo copia de la matriz en m2
-                    if(error!=0)
-                        return error; //Hubo error en copia de matriz
-                    error=output_error(errors,write_matrix(argv[5],fp2,m2)); //cargo m2 en el archivo
-                }
-
-            }
-             if (strcmp(argv[3], "idty")){
-                 if((strcmp(argv[4], "--out|-o"))&&(argv[5]!=NULL)){
-                    if(m1->rows>=m1->cols)
-                        error=output_error(errors,idty_matrix(m1->rows,&m2)); //genero matriz identidad en m2 con rows
-                    else
-                        error=output_error(errors,idty_matrix(m1->cols,&m2)); //genero matriz identidad en m2 con cols
-                    if(error!=0)
+     while (1) {
+         /*Este while parsea todos los argumentos de argv con la función getopt_long()*/
+         //int this_option_optind = optind ? optind : 1;
+         int option_index = 0;
+         
+         static struct option long_options[] = {
+             {OP_ARG_1_LONG,required_argument, 0,(int) OP_ARG_1},
+             {OP_ARG_2_LONG,required_argument, 0,(int) OP_ARG_2 },
+             {OP_CALC_LONG,required_argument, 0,OP_CALC},
+             {OP_ARG_O_LONG ,required_argument, 0, OP_ARG_O},
+             {OP_ARG_OPS_LONG,required_argument, 0,OP_ARG_OPS},
+             {OP_HLP_LONG,no_argument,0,OP_HLP},
+             {OP_SCA_LONG,required_argument, 0, (T_TYPE) OP_SCA},
+             {0, 0, 0, 0}
+         };
+         c = getopt_long (argc, argv, "1:p:2:s:c:o:h:",
+         long_options, &option_index);
+         if (c == -1)
+         /*c es -1 cuando se terminan todos los argumentos, entonces sale del while*/
+         break; 
+         switch (c) { 
+             case OP_ARG_1:
+                 printf("\n");
+                 printf ("Opcion: leer matriz de archivo\n");
+                 if (0 != optarg){
+                    printf("Se ha leido el archivo: %s", optarg);
+                    error=output_error(errors,read_matrix(optarg,fp,&m1));
+                    printf("\n");
+                    if(error != 0){
+                        printf ("%d",error);
+                        printf ("Error en la lectura de la matriz\n");
+                        return E_READ_ERROR;
+                    }
+                    matrix_print(m1);
+                    printf ("Matriz cargada correctamente\n"); 
+                    printf("\n");
+                 }
+                 else{
+                    printf ("Debe ingresar un archivo de matriz (M1,M2)\n");   
+                    return E_READ_ERROR;
+                 }              
+                 break;
+             case OP_CALC:
+                 printf("\n");
+                 printf ("Opcion: calcular matriz de archivo\n");
+                 if (0 != optarg){
+                    printf("Se ha leido el archivo: %s", optarg);
+                    printf("\n");
+                    error=output_error(errors,read_matrix(optarg,fp,&m1));
+                    printf("\n");
+                    if(error != 0){
+                        printf ("Ha ocurrido un error en al lectura del archivo\n");
                         return error;
-                    error=output_error(errors,write_matrix(argv[5],fp2,m2)); //cargo m2 en el archivo
-                }
-
-
+                    }
+                    matrix_print(m1);
+                    printf ("Matriz cargada correctamente\n"); 
+                    printf("\n");
+                    operation_name= argv[3];
+                 }
+                 else{
+                    printf ("Debe ingresar un archivo de matriz (M1,M2)\n");      
+                    return E_READ_ERROR;
+                 }
+                 break;    
+             case OP_ARG_2: 
+                 printf("\n");
+                 printf ("Opcion: leer segunda matriz de archivo\n");
+                 if (0 != optarg){
+                    printf("Se ha leido el archivo: %s", optarg);
+                    error=output_error(errors,read_matrix(optarg,fp,&m2));
+                    printf("\n");
+                    if(error != 0){
+                        printf ("Ha ocurrido un error en al lectura del archivo\n");
+                        return error;
+                    }
+                    else {
+                        matrix_print(m2);
+                        printf ("Matriz cargada correctamente\n");
+                        printf("\n");
+                    }
+                 }
+                 else{
+                    printf ("Debe ingresar un archivo de matriz (M1,M2)\n");      
+                    return E_READ_ERROR;
+                  }    
+                 break;
+             case OP_ARG_O:
+                out_name = optarg;
+                break;
+             case OP_ARG_OPS:
+                operation_name = optarg; 
+                break;
+             case OP_SCA:
+               if (0 != optarg){
+                 num=strtod(optarg, &ptr2);
+                 if(num==0.0){
+                    printf ("Debe ingresar un numero para realizar la multiplicacion\n");  
+                    return error;
+                 }
+                 printf ("El numero a multiplicar es: %s\n", optarg);
+                 printf("\n");
+               }
+               else{
+                    printf ("Debe ingresar un numero para realizar la multiplicacion\n");      
+                    return E_READ_ERROR;
+               }  
+                 break;
+             case OP_HLP:
+                 help();
+                 break;
+             default:
+                 /*Si el argumento no machea con ninguna opción conocida, debería ser un error en los
+                 parámetros...*/
+                 printf ("La función getopt_long ha retornado un carácter desconocido. El carácter es = %c\n", c);
+                 formato();
+                 break;
              }
-             if (strcmp(argv[3], "mult_scalar")){  
-                if((strcmp(argv[4], "--scalar|-s"))&&(argv[5]!=NULL)&&(strcmp(argv[6], "--out|-o"))&&(argv[7]!=NULL)){ 
-                    int ia = *(argv[5]) - '0';
-                    error=output_error(errors,mult_scalar(ia,m1,m3)); //genero mult_scalar en m3
-                    if(error==0) //si no hay error
-                        error=output_error(errors,write_matrix(argv[7],fp2,*m3)); //escribo en el archivo la matriz escalar
+         }
+
+
+
+         if ((operation_name) && (out_name) && (m1)){
+            if((strcmp(operation_name,"+") == 0)){
+
+                 printf("\n");
+                 printf ("Opcion: leer segunda matriz de archivo\n");
+                 printf("Se ha leido el archivo: %s", argv[2]);
+                 error=output_error(errors,read_matrix(argv[2],fp,&m2));
+                 printf("\n");
+                 if(error != 0){
+                    printf ("Ha ocurrido un error en al lectura del archivo\n");
+                    return error;
+                 }
+                 else {
+                    matrix_print(m2);
+                    printf ("Matriz cargada correctamente\n");
+                    printf("\n");
+                 }                 
+
+                printf ("Opcion: M1 + M2 \n");
+                 error=output_error(errors,sum(m1,m2,&m3));
+                 if(error != 0){
+                    printf ("Ocurrio un error en la suma\n");
+                    return error;
+                 }
+                 else {
+                    matrix_print(m3);
+                    free_matrix(&m2);
+                    free_matrix(&m1);
+                    printf ("Matriz sumada correctamente \n");
+                    printf("\n");
+                    printf ("Opcion: Escribir en el archivo\n");
+                    printf("Se va a escribir en el archivo: '%s'", out_name);
+                    error=output_error(errors,write_matrix(out_name,fp,m3));
+                    free_matrix(&m3);
+                    printf("\n");
+                    if(error != 0){
+                        printf ("Ha ocurrido un error en al escritura del archivo\n");
+                        return E_WRITE_ERROR;
+                    }
+                    else{
+                        printf ("Matriz cargada en el archivo '%s' correctamente\n",out_name);
+                        printf("\n");          
+                        return E_OK;
+                    }
+                 
+                 } 
+
+            }
+
+            if((strcmp(operation_name,"*") == 0)){
+
+                 printf("\n");
+                 printf ("Opcion: leer segunda matriz de archivo\n");
+                 printf("Se ha leido el archivo: %s", argv[6]);
+                 error=output_error(errors,read_matrix(argv[6],fp,&m2));
+                 printf("\n");
+                 if(error != 0){
+                    printf ("Ha ocurrido un error en al lectura del archivo\n");
+                    return error;
+                 }
+                 else {
+                    matrix_print(m2);
+                    printf ("Matriz cargada correctamente\n");
+                    printf("\n");
+                 }                 
+                printf ("Opcion: multiplicar 2 matrices\n");
+                error=output_error(errors,mult(m1,m2,&m3));
+                if(error != 0){
+                    printf ("Ocurrio un error en la multiplicacion\n");
+                    return error;
+                }
+                else {
+                    matrix_print(m3);
+                    free_matrix(&m1);
+                    free_matrix(&m2);
+                    printf ("Matriz multiplicada correctamente \n");
+                    printf("\n");
                 }
 
             }
-            free_matrix(&m1);free_matrix(&m2);free_matrix(m3);
-            return error; //retorna cualquier otro error, o si salio bien.
-        }
-    }
-        else
-            return output_error(errors,7);
 
- 
+            if((strcmp(operation_name,".*") == 0)){
+
+                 printf("\n");
+                 if (argv[6]!=NULL){
+                 num=strtod(argv[6], &ptr2);
+                 if(num==0.0){
+                    printf ("Debe ingresar un numero para realizar la multiplicacion\n");  
+                    return error;
+                 }
+                 printf ("El numero a multiplicar es: %s\n", argv[6]);
+                 printf("\n");
+                 error=output_error(errors,mult_scalar(num,m1,&m2));
+                 free_matrix(&m1);
+                 if(error != 0){
+                    printf ("Error en la multiplicacion\n");
+                    return error;
+                 }
+                 else {
+                    matrix_print(m2);
+                    printf ("Matriz multiplicada correctamente \n");
+                    printf("\n");
+                 }
+                 }
+                 else{
+                    printf ("Debe ingresar como parametro un numero para multiplicar\n");      
+                    return E_READ_ERROR; 
+                 }
+
+            }
+
+            if((strcmp(operation_name,"id") == 0)){
+
+                printf ("Opcion: matriz identidad\n");
+                if(get_cols(m1)>=get_rows(m1)){
+                    error=output_error(errors,idty_matrix(get_cols(m1),&m2));
+                }
+                else{
+                    error=output_error(errors,idty_matrix(get_rows(m1),&m2));
+                }
+                printf("\n");
+                if(error != 0){
+                    printf ("Ha ocurrido un error en la identidad\n"); 
+                    return error;
+                }
+                matrix_print(m2);
+                free_matrix(&m1);
+                printf ("Matriz identidad generada correctamente\n"); 
+                printf("\n");
+                error=output_error(errors,write_matrix(out_name,fp,m2));
+                free_matrix(&m2);
+                printf("\n");
+                if(error != 0){
+                    printf ("Ha ocurrido un error en al escritura del archivo\n");
+                    return E_WRITE_ERROR;
+                }
+                else{
+                    printf ("Matriz cargada en el archivo '%s' correctamente\n",out_name);
+                    printf("\n");          
+                    return E_OK;
+                }    
+
+            }
+
+            if((strcmp(operation_name,"dup") == 0)){
+
+                printf ("Opcion: duplicar matriz\n");
+                dup_matrix(m1,&m2);
+                free_matrix(&m1);
+                error=output_error(errors,write_matrix(out_name,fp,m2));
+                free_matrix(&m2);
+                printf("\n");
+                if(error != 0){
+                    printf ("Ha ocurrido un error en al escritura del archivo\n");
+                    return E_WRITE_ERROR;
+                }
+                else{
+                    printf ("Matriz cargada en el archivo '%s' correctamente\n",out_name);
+                    printf("\n");          
+                    return E_OK;
+                }
+
+            }
+
+            if((strcmp(operation_name,"idty") == 0)){
+
+                printf ("Opcion: matriz identidad\n");
+                if(get_cols(m1)>=get_rows(m1)){   
+                    error=output_error(errors,idty_matrix(get_cols(m1),&m2));
+                }
+                else{
+                    error=output_error(errors,idty_matrix(get_rows(m1),&m2));
+                }
+                printf("\n");
+                if(error != 0){
+                    printf ("Ha ocurrido un error en la identidad\n"); 
+                    return error;
+                }
+                matrix_print(m2);
+                free_matrix(&m1);
+                printf ("Matriz identidad generada correctamente\n"); 
+                printf("\n");
+                error=output_error(errors,write_matrix(out_name,fp,m2));
+                free_matrix(&m2);
+                printf("\n");
+                if(error != 0){
+                    printf ("Ha ocurrido un error en al escritura del archivo\n");
+                    return E_WRITE_ERROR;
+                }
+                else{
+                    printf ("Matriz cargada en el archivo '%s' correctamente\n",out_name);
+                    printf("\n");          
+                    return E_OK;
+                }
+            
+
+            }
+
+            if((strcmp(operation_name,"mult_scalar") == 0) && (num)){
+
+                printf ("Opcion: multiplicar matriz por un scalar \n");
+                error=output_error(errors,mult_scalar(num,m1,&m2));
+                if(error != 0){
+                    printf ("ERROR!\n");
+                }
+                else {
+                    matrix_print(m2);
+                    free_matrix(&m1);
+                    printf ("Matriz multiplicada correctamente \n");
+                    printf("\n");
+                    error=output_error(errors,write_matrix(out_name,fp,m2));
+                    free_matrix(&m2);
+                    printf("\n");
+                    if(error != 0){
+                        printf ("Ha ocurrido un error en al escritura del archivo\n");
+                        return E_WRITE_ERROR;
+                    }
+                    else{
+                        printf ("Matriz cargada en el archivo '%s' correctamente\n",out_name);
+                        printf("\n");          
+                        return E_OK;
+                    }
+                }
+                  
+            }              
+
+            
+
+            if((strcmp(operation_name,"null") == 0)){
+
+                printf ("Opcion: matriz nula\n");
+                error=output_error(errors,null_matrix(get_rows(m1),get_cols(m1),&m2));
+                printf("\n");
+                if(error != 0){
+                    printf ("ERROR!\n");
+                    return error;
+                }
+                matrix_print(m2);
+                free_matrix(&m1);
+                printf ("Matriz nula generada correctamente\n"); 
+                printf("\n");                
+                error=output_error(errors,write_matrix(out_name,fp,m2));
+                free_matrix(&m2);
+                printf("\n");
+                if(error != 0){
+                    printf ("Ha ocurrido un error en al escritura del archivo\n");
+                    return E_WRITE_ERROR;
+                }
+                else{
+                    printf ("Matriz cargada en el archivo '%s' correctamente\n",out_name);
+                    printf("\n");          
+                    return E_OK;
+                }
+
+
+            }
+
+            if((strcmp(operation_name,"sum") == 0) && (m2)){
+
+                 printf ("Opcion: M1 + M2 \n");
+                 error=output_error(errors,sum(m1,m2,&m3));
+                 if(error != 0){
+                    printf ("Ocurrio un error en la suma\n");
+                    return error;
+                 }
+                 else {
+                    matrix_print(m3);
+                    free_matrix(&m2);
+                    free_matrix(&m1);
+                    printf ("Matriz sumada correctamente \n");
+                    printf("\n");
+                    printf ("Opcion: Escribir en el archivo\n");
+                    printf("Se va a escribir en el archivo: '%s'", out_name);
+                    error=output_error(errors,write_matrix(out_name,fp,m3));
+                    free_matrix(&m3);
+                    printf("\n");
+                    if(error != 0){
+                        printf ("Ha ocurrido un error en al escritura del archivo\n");
+                        return E_WRITE_ERROR;
+                    }
+                    else{
+                        printf ("Matriz cargada en el archivo '%s' correctamente\n",out_name);
+                        printf("\n");          
+                        return E_OK;
+                    }
+                 
+                 }          
+            }
+
+            if((strcmp(operation_name,"mult") == 0) && (m2)){
+
+                printf ("Opcion: multiplicar 2 matrices\n");
+                error=output_error(errors,mult(m1,m2,&m3));
+                if(error != 0){
+                    printf ("Ocurrio un error en la multiplicacion\n");
+                    return error;
+                }
+                else {
+                    matrix_print(m3);
+                    free_matrix(&m1);
+                    free_matrix(&m2);
+                    printf ("Matriz multiplicada correctamente \n");
+                    printf("\n");
+                }
+
+            } 
+
+            if((strcmp(operation_name,"cmp") == 0) && (m2)){
+
+                printf ("Opcion: comparar 2 matrices\n");
+                error=output_error(errors,cmp_matrix(m1,m2));
+                if(error == 8){
+                    printf ("Error incompatibles!\n");
+                    return error;
+                }
+                else {
+                    if(error != 0){
+                        printf ("ERROR\n");
+                        return error;
+                    }
+                free_matrix(&m1);
+                free_matrix(&m2);
+                printf ("Las matrices son iguales \n");
+                printf("\n");     
+                }
+
+            }
+          
+        free_matrix(&m1);free_matrix(&m2);free_matrix(&m3);     
+    }
+    else{
+        printf("No se han ingresado los argumentos de forma correcta\n");
+    }
+    exit(0);
 }
+     
+        
+ 
+

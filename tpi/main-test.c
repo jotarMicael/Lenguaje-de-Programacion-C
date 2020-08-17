@@ -23,9 +23,10 @@ int main(int argc, char *argv[])
   FILE *fp=NULL;
   
 
-  if (read_matrix(argv[1],fp, &ma))
+  if ((read_matrix(argv[1],fp, &ma))!=0)
     {
-      fprintf(stderr,"Can't read matrix\n");      
+      fprintf(stderr,"No se ha podido leer la matriz del archivo\n");   
+      fprintf(stderr,"Asegurese de ingresar el nombre correctamente\n");      
       return -1;
     }
   fprintf(stderr,"ma=\n"); matrix_print(ma);
@@ -107,6 +108,7 @@ int main(int argc, char *argv[])
   fprintf(stderr,"-----------------\n");
   free_matrix(&md);
   free_matrix(&me);
+  free_matrix(&m0);
 
   //////////// MULT  SCALAR
   // A + B = F
@@ -141,7 +143,13 @@ int main(int argc, char *argv[])
   mult(ma, m1, &me);
   fprintf(stderr,"ma * m1 \n"); matrix_print(me);
   fprintf(stderr,"-----------------\n");
-  fprintf(stderr,"(ma * m1) = (m1 * ma) = ma : %d %d %d\n",cmp_matrix(ma,md), cmp_matrix(md,ma), cmp_matrix(md,me));
+  fprintf(stderr,"(ma * m1) = (m1 * ma) = ma :");
+  fprintf(stderr,"ma * m1 \n"); matrix_print(md);
+  fprintf(stderr,"-----------------\n");
+  fprintf(stderr,"m1 * ma \n"); matrix_print(me);
+  fprintf(stderr,"-----------------\n");
+  fprintf(stderr,"ma\n"); matrix_print(ma);
+  fprintf(stderr,"-----------------\n");
   free_matrix(&md);
   free_matrix(&me);
 
@@ -178,9 +186,13 @@ int main(int argc, char *argv[])
   fprintf(stderr,"ma = \n"); matrix_print(ma);
 
   // (A * B) * C = E
-  
+  free_matrix(&mb);
+  create_and_fill_matrix(get_cols(ma), get_cols(ma), 1.5, &mb);
+  free_matrix(&mc);
+  create_and_fill_matrix(get_cols(ma), get_cols(ma), 1.5, &mc);
   free_matrix(&maux1);
-  mult(ma,mb,&maux1); 
+  mult(ma,mb,&maux1);
+  fprintf(stderr,"maux1=\n"); matrix_print(maux1); 
   mult(maux1,mc,&me);
   
   // D == E , E == D
@@ -215,12 +227,10 @@ int main(int argc, char *argv[])
   free_matrix(&me);
   free_matrix(&maux1);  
   free_matrix(&maux2);  
-
   create_and_fill_matrix(get_rows(ma), get_cols(ma), 3.0, &md);
-  set_elem_matrix(0,0,100.0,&md);
-  set_elem_matrix(1,1,200.0,&md);
-  set_elem_matrix(2,2,200.0,&md);   
-
+  set_elem_matrix(0,0,10.0,&md);
+  set_elem_matrix(0,2,20.0,&md);
+  set_elem_matrix(0,3,20.0,&md);    
   fprintf(stderr,"md=\n"); matrix_print(md);
   printf("-------------\n");
   for(int i=0;i<get_rows(md);i++)

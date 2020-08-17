@@ -1,28 +1,28 @@
-gcc main2.c error_mat.c f_lists.c matriz_operations.c -Wall -o main2.out //Compilar
+gcc main.c error_mat.c f_lists.c matriz_operations.c -Wall -o main.out //Compilar
 
 --help //ayuda
 
 
 SOLO CON UNA MATRIZ {
 
--1 test3.m -p --dup -o test54.m // duplicar
+-1 test3.m --op dup -o test54.m // duplicar
 
--1 test3.m -p --id -o test54.m // identy
+-1 test3.m --op idty -o test54.m // identy
 
--1 test3.m -p -s 3.45 -m -o test54.m   // multiplicar por un scalar
+-1 test3.m --op mult_scalar -s 3.45 -o test54.m // multiplicar por un scalar
 
--1 test3.m -p --null -o test16.m //matriz nula
+-1 test3.m --op null -o test16.m //matriz nula
 
 
 }
 
 CON 2 MATRICES {
 
--1 test3.m -2 test3.m -p --sum --out test54.m // sumar
+-1 test3.m -2 test3.m --op sum -o test54.m // sumar
 
--1 test3.m -2 test7.m -p --mult --out test54.m //multiplicar
+-1 test3.m -2 test7.m --op mult -o test54.m //multiplicar
 
--1 test3.m -2 test3.m -p --cmp -o test16.m
+-1 test3.m -2 test3.m --op cmp -o test16.m //comparar
 
 
 
@@ -31,13 +31,13 @@ CON 2 MATRICES {
 CON --CALC {
 	
 
---calc test3.m --+ test3.m -o test60.m //sumar
+--calc test3.m + test3.m -o test60.m //sumar
 
---calc test3.m --* test7.m -o test60.m //multiplicar
+--calc test3.m \* test7.m -o test60.m //multiplicar
 
---calc test3.m --.* 2 -o test60.m //multiplicar por scalar
+--calc test3.m \.\* 2 -o test60.m //multiplicar por scalar
 
---calc test3.m --id -o test60.m //matriz identidad
+-c test3.m id -o test60.m //matriz identidad
 
 }
 
